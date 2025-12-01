@@ -53,6 +53,67 @@ toolbarConfig.toolbarKeys = [
 ]
 ```
 
+## insertKeys
+
+You can continue to insert new menus based on the current `toolbarKeys`, such as custom extended menus
+
+```ts
+toolbarConfig.insertKeys = {
+  index: 5, // The insertion position is based on the current toolbarKeys
+  keys: ['menu-key1', 'menu-key2']
+}
+```
+
+`insertKeys` supports multiple insertion positions。
+
+```ts
+toolbarConfig.insertKeys = [
+  {
+    index: 5,
+    keys: ['menu-key1', 'menu-key2']
+  },
+  {
+    index: 10,
+    keys: ['menu-key3', 'menu-key4']
+  }
+]
+```
+
+`insertKeys` supports rewriting menus at specified locations, such as:
+
+```ts
+toolbarConfig.insertKeys = [
+  {
+    index: 5,
+    keys: [],
+    /** optional item, rewrite menu config */
+    replaceFn: (menu) => { /** Menu configuration with index=5 */
+      return menu; /** A new configuration must be returned that meets the configuration requirements */
+    }
+  }
+]
+```
+
+In cases where there are both insertion and rewriting menus, priority should be given to executing modifications before inserting, such as:
+
+```ts
+toolbarConfig.insertKeys = [
+  {
+    index: 5,
+    keys: ['menu-key1'], /** Perform insertion again */ 
+    replaceFn: (menu) => { /** Perform modifications first */
+      return menu; /** A new configuration must be returned that meets the configuration requirements */
+    }
+  }
+]
+```
+
+:::tip
+Note: `insertKeys` modifies the array of menu configurations, so when modifying multiple menus, you need to pay attention to the array index. <br>
+:::
+
+
+
 ## excludeKeys
 
 You may only want to exclude some menus, and keep the rest.
