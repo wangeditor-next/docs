@@ -1,6 +1,9 @@
 import { defineConfig } from 'vitepress'
 import { search as zhSearch } from './zh'
 
+const siteUrl = 'https://wangeditor-next.github.io/docs/'
+const ogImage = `${siteUrl}image/editor.png`
+
 export const shared = defineConfig({
     title: 'wangEditor-next',
 
@@ -25,7 +28,7 @@ export const shared = defineConfig({
     },
 
     sitemap: {
-        hostname: 'https://vitepress.dev',
+        hostname: siteUrl,
         transformItems(items) {
             return items.filter((item) => !item.url.includes('migration'))
         }
@@ -36,12 +39,14 @@ export const shared = defineConfig({
         ['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/image/logo.png' }],
         ['link', { rel: 'icon', type: 'image/png', href: '/docs/image/logo.png' }],
         ['meta', { name: 'theme-color', content: '#5f67ee' }],
+        ['meta', { name: 'description', content: 'wangEditor-next 官方文档，包含安装、配置、API、插件与示例。' }],
         ['meta', { property: 'og:type', content: 'website' }],
-        ['meta', { property: 'og:locale', content: 'en' }],
-        ['meta', { property: 'og:title', content: 'VitePress | Vite & Vue Powered Static Site Generator' }],
-        ['meta', { property: 'og:site_name', content: 'VitePress' }],
-        ['meta', { property: 'og:image', content: 'https://vitepress.dev/vitepress-og.jpg' }],
-        ['meta', { property: 'og:url', content: 'https://vitepress.dev/' }],
+        ['meta', { property: 'og:locale', content: 'zh_CN' }],
+        ['meta', { property: 'og:title', content: 'wangEditor-next Docs' }],
+        ['meta', { property: 'og:site_name', content: 'wangEditor-next' }],
+        ['meta', { property: 'og:description', content: 'Open-source rich text editor documentation for wangEditor-next.' }],
+        ['meta', { property: 'og:image', content: ogImage }],
+        ['meta', { property: 'og:url', content: siteUrl }],
         ['script', { src: 'https://cdn.usefathom.com/script.js', 'data-site': 'AZBRSFGG', 'data-spa': 'auto', defer: '' }]
     ],
 
@@ -57,7 +62,6 @@ export const shared = defineConfig({
             options: {
                 locales: { ...zhSearch }
             }
-        },
-        
+        }
     },
 })

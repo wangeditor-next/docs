@@ -6,13 +6,11 @@
 
 使用 [VitePress](https://vitepress.dev/zh/) 搭建的文档。
 
-全局安装 vitepress `npm install vitepress -g`
-
 下载当前代码，然后启动
 
 ```shell
-pnpm install     # 安装依赖
-pnpm docs:dev # 启动，浏览器访问 http://localhost:8080/
+pnpm install  # 安装依赖
+pnpm docs:dev # 启动，浏览器访问 http://localhost:5173/docs/
 ```
 
 ## 发布上线
