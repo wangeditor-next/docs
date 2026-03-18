@@ -179,6 +179,23 @@ editor.undo()
 editor.redo()
 ```
 
+### clear history
+
+wangEditor does not currently expose a dedicated API to clear the undo / redo stacks. However, the editor instance is extended by `slate-history`, so you can reset `history` directly.
+
+```ts
+import type { HistoryEditor } from 'slate-history'
+
+const historyEditor = editor as HistoryEditor
+
+historyEditor.history = {
+  undos: [],
+  redos: [],
+}
+```
+
+A common use case is to run this right after `editor.setHtml(...)` or after loading existing content, so users cannot undo back to the previous content.
+
 ## Node API
 
 Please learn the editor [content node structure standard](./node-define.md) first.
@@ -634,4 +651,3 @@ You could get slate Location objects from `@wangeditor-next/editor`, no need to 
 ```ts
 import { SlateLocation, SlatePath, SlatePoint, SlateRange } from '@wangeditor-next/editor'
 ```
-

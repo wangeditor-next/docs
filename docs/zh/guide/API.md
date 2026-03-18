@@ -196,6 +196,23 @@ editor.undo()
 editor.redo()
 ```
 
+### clear history
+
+wangEditor 当前没有单独封装“清空 undo / redo 历史栈”的 API，但编辑器实例本身是基于 `slate-history` 扩展出来的，因此可以直接重置 `history`。
+
+```ts
+import type { HistoryEditor } from 'slate-history'
+
+const historyEditor = editor as HistoryEditor
+
+historyEditor.history = {
+  undos: [],
+  redos: [],
+}
+```
+
+常见用法是在 `editor.setHtml(...)` 或数据回显完成后执行一次，避免用户撤销回旧内容。
+
 ## 节点操作
 
 使用节点操作 API 前，请查看 [节点数据结构](./node-define.md) 。
