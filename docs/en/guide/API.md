@@ -196,6 +196,20 @@ historyEditor.history = {
 
 A common use case is to run this right after `editor.setHtml(...)` or after loading existing content, so users cannot undo back to the previous content.
 
+### history without merging
+
+If you need a programmatic insert to become its own undo step instead of merging into the previous history entry, you can directly use `HistoryEditor.withoutMerging(...)` from `slate-history`.
+
+```ts
+import { HistoryEditor } from 'slate-history'
+
+HistoryEditor.withoutMerging(editor as HistoryEditor, () => {
+  editor.insertText('plain text')
+})
+```
+
+This is useful for flows like “paste HTML first, then let the user keep plain text only”. Since the editor instance is already extended by `slate-history` at runtime, you do not need to wait for a separate wangEditor wrapper API.
+
 ## Node API
 
 Please learn the editor [content node structure standard](./node-define.md) first.

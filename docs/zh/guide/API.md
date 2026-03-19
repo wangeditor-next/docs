@@ -213,6 +213,20 @@ historyEditor.history = {
 
 常见用法是在 `editor.setHtml(...)` 或数据回显完成后执行一次，避免用户撤销回旧内容。
 
+### history without merging
+
+如果你需要让某次程序化插入单独成为一条历史记录，而不是和前一次操作合并，可以直接使用 `slate-history` 的 `HistoryEditor.withoutMerging(...)`。
+
+```ts
+import { HistoryEditor } from 'slate-history'
+
+HistoryEditor.withoutMerging(editor as HistoryEditor, () => {
+  editor.insertText('plain text')
+})
+```
+
+这类用法常见于“粘贴 HTML 后，用户选择转成纯文本再插入”的场景。因为编辑器实例运行时已经经过 `slate-history` 扩展，所以不需要额外等待 wangEditor 再封装一个新 API。
+
 ## 节点操作
 
 使用节点操作 API 前，请查看 [节点数据结构](./node-define.md) 。
