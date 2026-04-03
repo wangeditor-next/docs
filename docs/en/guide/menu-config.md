@@ -281,7 +281,8 @@ editorConfig.MENU_CONF['uploadImage'] = {
 
 ### Server Address
 
-Required.
+Required when you use the built-in uploader.
+If you use `customUpload` or `uploadAdapter`, `server` is not required.
 
 ```ts
 editorConfig.MENU_CONF['uploadImage'] = {
@@ -438,6 +439,58 @@ editorConfig.MENU_CONF['uploadImage'] = {
 }
 ```
 
+#### Upload Adapter
+
+If you want to replace the transport layer but still reuse wangEditor's built-in upload callbacks and insert flow, use `uploadAdapter`.
+
+- `customUpload` means you fully take over upload and insertion
+- `uploadAdapter` means you only replace the uploader implementation, while the editor still reuses the existing progress, success, error, and insert flow
+- If both `customUpload` and `uploadAdapter` are configured, `customUpload` has higher priority
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    uploadAdapter({ config, editor }) {
+        const files: File[] = []
+
+        return {
+            addFiles(fileList) {
+                files.push(...fileList.map(item => item.data as File))
+            },
+            async upload() {
+                for (const file of files) {
+                    const fileInfo = {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                    }
+
+                    try {
+                        const res = await myUpload(file, editor)
+
+                        config.onProgress?.(100)
+                        config.onSuccess(fileInfo, {
+                            errno: 0,
+                            data: {
+                                url: res.url,
+                                alt: file.name,
+                                href: res.url,
+                            },
+                        })
+                    } catch (err) {
+                        config.onError(fileInfo, err, null)
+                    }
+                }
+            },
+        }
+    },
+}
+```
+
+:::tip
+`uploadAdapter` should call `config.onProgress`, `config.onSuccess`, `config.onError`, and related callbacks at the right time.
+If you want to reuse the editor's default insert flow, pass the same response body shape as the built-in uploader to `config.onSuccess`. If your response body is different, combine it with `customInsert`.
+:::
+
 #### Custom Select Images
 
 If you unwanted wangEditor's embedded select function, you can use `customBrowseAndUpload` to implement by yourself.
@@ -542,7 +595,8 @@ editorConfig.MENU_CONF['uploadVideo'] = {
 
 ### Server Address
 
-Required.
+Required when you use the built-in uploader.
+If you use `customUpload` or `uploadAdapter`, `server` is not required.
 
 ```ts
 editorConfig.MENU_CONF['uploadVideo'] = {
@@ -701,6 +755,57 @@ editorConfig.MENU_CONF['uploadVideo'] = {
     }
 }
 ```
+
+#### Upload Adapter
+
+If you want to replace the transport layer but still reuse wangEditor's built-in upload callbacks and insert flow, use `uploadAdapter`.
+
+- `customUpload` means you fully take over upload and insertion
+- `uploadAdapter` means you only replace the uploader implementation, while the editor still reuses the existing progress, success, error, and insert flow
+- If both `customUpload` and `uploadAdapter` are configured, `customUpload` has higher priority
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    uploadAdapter({ config, editor }) {
+        const files: File[] = []
+
+        return {
+            addFiles(fileList) {
+                files.push(...fileList.map(item => item.data as File))
+            },
+            async upload() {
+                for (const file of files) {
+                    const fileInfo = {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                    }
+
+                    try {
+                        const res = await myUpload(file, editor)
+
+                        config.onProgress?.(100)
+                        config.onSuccess(fileInfo, {
+                            errno: 0,
+                            data: {
+                                url: res.url,
+                                poster: res.poster || "",
+                            },
+                        })
+                    } catch (err) {
+                        config.onError(fileInfo, err, null)
+                    }
+                }
+            },
+        }
+    },
+}
+```
+
+:::tip
+`uploadAdapter` should call `config.onProgress`, `config.onSuccess`, `config.onError`, and related callbacks at the right time.
+If you want to reuse the editor's default insert flow, pass the same response body shape as the built-in uploader to `config.onSuccess`. If your response body is different, combine it with `customInsert`.
+:::
 
 #### Custom Select Videos
 

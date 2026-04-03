@@ -298,7 +298,8 @@ editorConfig.MENU_CONF['uploadImage'] = {
 
 ### 服务端地址
 
-**必填**，否则上传图片会报错。
+使用内置上传器时 **必填**，否则上传图片会报错。
+如果你使用 `customUpload` 或 `uploadAdapter` ，则不需要配置 `server` 。
 
 ```ts
 editorConfig.MENU_CONF['uploadImage'] = {
@@ -459,6 +460,59 @@ editorConfig.MENU_CONF['uploadImage'] = {
 }
 ```
 
+#### 自定义上传适配器
+
+如果你想替换底层上传实现，但仍然复用 wangEditor 内置的上传回调和插入链路，可以使用 `uploadAdapter` 。
+
+- `customUpload` 表示你完全接管上传和插入
+- `uploadAdapter` 表示你只替换上传器实现，编辑器仍然复用现有的进度、成功、失败、错误和插入流程
+- 如果同时配置了 `customUpload` 和 `uploadAdapter` ，则优先使用 `customUpload`
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    uploadAdapter({ config, editor }) {
+        const files: File[] = []
+
+        return {
+            addFiles(fileList) {
+                files.push(...fileList.map(item => item.data as File))
+            },
+            async upload() {
+                for (const file of files) {
+                    const fileInfo = {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                    }
+
+                    try {
+                        // 例如：上传到 OSS / S3 / 自定义服务
+                        const res = await myUpload(file, editor)
+
+                        config.onProgress?.(100)
+                        config.onSuccess(fileInfo, {
+                            errno: 0,
+                            data: {
+                                url: res.url,
+                                alt: file.name,
+                                href: res.url,
+                            },
+                        })
+                    } catch (err) {
+                        config.onError(fileInfo, err, null)
+                    }
+                }
+            },
+        }
+    },
+}
+```
+
+:::tip
+`uploadAdapter` 需要在合适的时机主动调用 `config.onProgress`、`config.onSuccess`、`config.onError` 等回调。
+如果你想复用编辑器默认插入逻辑，请给 `config.onSuccess` 传入和内置上传一致的 response body；如果你的返回格式不同，可以配合 `customInsert` 一起使用。
+:::
+
 #### 自定义选择图片
 
 如果你不想使用 wangEditor 自带的选择文件功能，例如你有自己的图床，或者图片选择器。<br>
@@ -573,7 +627,8 @@ editorConfig.MENU_CONF['uploadVideo'] = {
 
 ### 服务端地址
 
-**必填**，否则上传视频会报错。
+使用内置上传器时 **必填**，否则上传视频会报错。
+如果你使用 `customUpload` 或 `uploadAdapter` ，则不需要配置 `server` 。
 
 ```ts
 editorConfig.MENU_CONF['uploadVideo'] = {
@@ -735,6 +790,57 @@ editorConfig.MENU_CONF['uploadVideo'] = {
     }
 }
 ```
+
+#### 自定义上传适配器
+
+如果你想替换底层上传实现，但仍然复用 wangEditor 内置的上传回调和插入链路，可以使用 `uploadAdapter` 。
+
+- `customUpload` 表示你完全接管上传和插入
+- `uploadAdapter` 表示你只替换上传器实现，编辑器仍然复用现有的进度、成功、失败、错误和插入流程
+- 如果同时配置了 `customUpload` 和 `uploadAdapter` ，则优先使用 `customUpload`
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    uploadAdapter({ config, editor }) {
+        const files: File[] = []
+
+        return {
+            addFiles(fileList) {
+                files.push(...fileList.map(item => item.data as File))
+            },
+            async upload() {
+                for (const file of files) {
+                    const fileInfo = {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                    }
+
+                    try {
+                        const res = await myUpload(file, editor)
+
+                        config.onProgress?.(100)
+                        config.onSuccess(fileInfo, {
+                            errno: 0,
+                            data: {
+                                url: res.url,
+                                poster: res.poster || "",
+                            },
+                        })
+                    } catch (err) {
+                        config.onError(fileInfo, err, null)
+                    }
+                }
+            },
+        }
+    },
+}
+```
+
+:::tip
+`uploadAdapter` 需要在合适的时机主动调用 `config.onProgress`、`config.onSuccess`、`config.onError` 等回调。
+如果你想复用编辑器默认插入逻辑，请给 `config.onSuccess` 传入和内置上传一致的 response body；如果你的返回格式不同，可以配合 `customInsert` 一起使用。
+:::
 
 #### 自定义选择视频
 
