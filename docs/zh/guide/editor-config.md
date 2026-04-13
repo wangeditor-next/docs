@@ -57,6 +57,58 @@ editorConfig.scroll = false
 - 在线文档，如腾讯文档、语雀那样的，参考 [demo](https://wangeditor-next.github.io/demo/like-qq-doc.html) 中的“仿腾讯文档”
 :::
 
+## textStyleMode
+
+配置文本/段落样式导出模式。
+
+```ts
+editorConfig.textStyleMode = 'class' // 'inline' | 'class'
+```
+
+- `inline`（默认）：输出内联 `style`
+- `class`：输出 `class + data-w-e-*`，适合严格 CSP 场景
+
+详细使用与迁移建议见 [CSP class 样式模式](./csp-class-mode.md)。
+
+## classStylePolicy
+
+当 `textStyleMode = 'class'` 时，配置未注册 token 的处理策略。
+
+```ts
+editorConfig.classStylePolicy = 'preserve-data'
+// 'preserve-data' | 'fallback-inline' | 'strict'
+```
+
+- `preserve-data`（默认）：保留 `data-w-e-*`
+- `fallback-inline`：回退到 inline style
+- `strict`：直接抛错
+
+## styleClassTokens
+
+扩展 class 模式允许的 token 集合。
+
+```ts
+editorConfig.styleClassTokens = {
+    color: ['rgb(1, 2, 3)'],
+    fontSize: ['20px'],
+}
+```
+
+:::tip
+`styleClassTokens` 只注册 token，不自动注入业务 CSS。
+:::
+
+## onClassStyleUnsupported
+
+class 模式遇到未注册 token 时的通知回调。
+
+```ts
+editorConfig.onClassStyleUnsupported = payload => {
+    // payload: { type, value, scene, fallback, message }
+    console.warn(payload)
+}
+```
+
 ## maxLength onMaxLength
 
 配置编辑器的 maxlength ，参考 [demo](https://wangeditor-next.github.io/demo/max-length.html)。

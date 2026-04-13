@@ -106,6 +106,7 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
             items: [
                 { text: 'Toolbar Configuration', link: '/toolbar-config' },
                 { text: 'Editor Configuration', link: '/editor-config' },
+                { text: 'CSP Class Style Mode', link: '/csp-class-mode' },
                 { text: 'Menu Configuration', link: '/menu-config' },
                 { text: 'Editor API', link: '/API' },
             ],

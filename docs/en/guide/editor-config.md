@@ -57,6 +57,58 @@ When you need to set `false`?
 - Want a Google doc style, see [Demo](https://wangeditor-next.github.io/demo/like-qq-doc.html?lang=en)
 :::
 
+## textStyleMode
+
+Configure text/paragraph style export mode.
+
+```ts
+editorConfig.textStyleMode = 'class' // 'inline' | 'class'
+```
+
+- `inline` (default): output inline `style`
+- `class`: output `class + data-w-e-*` for strict CSP scenarios
+
+For full usage and migration guidance, see [CSP Class Style Mode](./csp-class-mode.md).
+
+## classStylePolicy
+
+When `textStyleMode = 'class'`, configure how unsupported tokens are handled.
+
+```ts
+editorConfig.classStylePolicy = 'preserve-data'
+// 'preserve-data' | 'fallback-inline' | 'strict'
+```
+
+- `preserve-data` (default): keep `data-w-e-*`
+- `fallback-inline`: fallback to inline style
+- `strict`: throw error directly
+
+## styleClassTokens
+
+Register extra accepted tokens for class mode.
+
+```ts
+editorConfig.styleClassTokens = {
+    color: ['rgb(1, 2, 3)'],
+    fontSize: ['20px'],
+}
+```
+
+:::tip
+`styleClassTokens` only registers tokens, it does not inject your custom CSS.
+:::
+
+## onClassStyleUnsupported
+
+Callback for unsupported tokens in class mode.
+
+```ts
+editorConfig.onClassStyleUnsupported = payload => {
+    // payload: { type, value, scene, fallback, message }
+    console.warn(payload)
+}
+```
+
 ## maxLength onMaxLength
 
 See [demo](https://wangeditor-next.github.io/demo/max-length.html?lang=en).
