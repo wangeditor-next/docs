@@ -106,6 +106,7 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
             items: [
                 { text: '工具栏配置', link: '/toolbar-config' },
                 { text: '编辑器配置', link: '/editor-config' },
+                { text: 'CSP class 样式模式', link: '/csp-class-mode' },
                 { text: '菜单配置', link: '/menu-config' },
                 { text: '编辑器 API', link: '/API' },
             ],
