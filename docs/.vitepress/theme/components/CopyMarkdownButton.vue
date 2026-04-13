@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useData } from 'vitepress'
+import { useData, withBase } from 'vitepress'
 
 type CopyState = 'idle' | 'loading' | 'copied' | 'missing' | 'error'
 
 const { page, site } = useData()
 
-// Load raw Markdown for every page so we can copy the original content.
+// Load raw Markdown for every page so we can copy/open the original content.
 const mdSources = import.meta.glob('../../../**/*.md', {
   query: '?raw',
   import: 'default',
@@ -14,8 +14,19 @@ const mdSources = import.meta.glob('../../../**/*.md', {
 
 const state = ref<CopyState>('idle')
 const headingEl = ref<HTMLElement | null>(null)
+const rootEl = ref<HTMLElement | null>(null)
+const triggerEl = ref<HTMLElement | null>(null)
+const menuEl = ref<HTMLElement | null>(null)
+const menuOpen = ref(false)
+const menuId = 'vp-copy-menu'
+const menuStyle = ref<Record<string, string>>({
+  top: '0px',
+  left: '0px',
+  width: '320px',
+})
 
 const locale = computed(() => (site.value.lang?.startsWith('en') ? 'en' : 'zh'))
+
 // page.relativePath is relative to docs root (e.g. guide/index.md),
 // glob keys are relative to this file (../../../zh/guide/index.md).
 const sourceKey = computed(() => {
@@ -32,8 +43,127 @@ const sourceKey = computed(() => {
   return preferred ?? candidates[0]
 })
 
+const i18n = computed(() => {
+  if (locale.value === 'en') {
+    return {
+      trigger: 'Markdown',
+      copied: 'Copied',
+      loading: 'Processing...',
+      missing: 'Markdown not found',
+      error: 'Action failed',
+      copyPage: 'Copy page',
+      copyPageDesc: 'Copy this page as Markdown for LLMs',
+      viewMd: 'View as Markdown',
+      viewMdDesc: 'View this page as plain text',
+      llmsFull: 'LLMs full',
+      llmsFullDesc: 'See full docs as markdown for LLMs',
+      openClaude: 'Open in Claude',
+      openClaudeDesc: 'Ask questions about this page',
+      openChatGPT: 'Open in ChatGPT',
+      openChatGPTDesc: 'Ask questions about this page',
+    }
+  }
+
+  return {
+    trigger: 'Markdown',
+    copied: '已复制',
+    loading: '处理中...',
+    missing: '未找到本页 Markdown',
+    error: '操作失败',
+    copyPage: '复制页面',
+    copyPageDesc: '复制当前页面 Markdown（适合喂给 AI）',
+    viewMd: '查看 Markdown',
+    viewMdDesc: '以纯文本方式查看当前页面',
+    llmsFull: 'LLMs full',
+    llmsFullDesc: '查看完整文档 Markdown（面向 LLM）',
+    openClaude: '在 Claude 中打开',
+    openClaudeDesc: '围绕当前页面发起提问',
+    openChatGPT: '在 ChatGPT 中打开',
+    openChatGPTDesc: '围绕当前页面发起提问',
+  }
+})
+
+const statusText = computed(() => {
+  if (state.value === 'copied') return i18n.value.copied
+  if (state.value === 'loading') return i18n.value.loading
+  if (state.value === 'missing') return i18n.value.missing
+  if (state.value === 'error') return i18n.value.error
+  return ''
+})
+
+const disabled = computed(() => state.value === 'loading')
+
+const llmsFullHref = computed(() => {
+  return withBase(locale.value === 'en' ? '/ai/en-guide-full.txt' : '/ai/zh-guide-full.txt')
+})
+
+const currentPageUrl = computed(() => {
+  if (typeof window === 'undefined') return ''
+  return window.location.href.split('#')[0]
+})
+
+const chatPrompt = computed(() => {
+  if (!currentPageUrl.value) return ''
+  return `Read ${currentPageUrl.value} so I can ask questions about it.`
+})
+
+const claudeHref = computed(() => {
+  if (!chatPrompt.value) return 'https://claude.ai/new'
+  return `https://claude.ai/new?q=${encodeURIComponent(chatPrompt.value)}`
+})
+
+const chatGptHref = computed(() => {
+  if (!chatPrompt.value) return 'https://chat.openai.com/?hint=search'
+  return `https://chat.openai.com/?hint=search&q=${encodeURIComponent(chatPrompt.value)}`
+})
+
 function clearHeadingHighlight() {
   headingEl.value?.classList.remove('vp-copy-h1')
+}
+
+function closeMenu() {
+  menuOpen.value = false
+}
+
+function updateMenuPosition() {
+  if (typeof window === 'undefined') return
+
+  const trigger = triggerEl.value
+  if (!trigger || !menuOpen.value) return
+
+  const rect = trigger.getBoundingClientRect()
+  const sidePadding = 12
+  const width = Math.min(340, window.innerWidth - sidePadding * 2)
+
+  let left = rect.right - width
+  left = Math.max(sidePadding, Math.min(left, window.innerWidth - width - sidePadding))
+
+  let top = rect.bottom + 8
+  const menuHeight = menuEl.value?.offsetHeight ?? 280
+  if (top + menuHeight > window.innerHeight - sidePadding) {
+    const aboveTop = rect.top - menuHeight - 8
+    if (aboveTop >= sidePadding) {
+      top = aboveTop
+    }
+  }
+
+  menuStyle.value = {
+    top: `${Math.round(top)}px`,
+    left: `${Math.round(left)}px`,
+    width: `${Math.round(width)}px`,
+  }
+}
+
+function attachMenuPositionListeners() {
+  if (typeof window === 'undefined') return
+  window.addEventListener('resize', updateMenuPosition)
+  window.addEventListener('scroll', updateMenuPosition, true)
+}
+
+function detachMenuPositionListeners() {
+  if (typeof window === 'undefined') return
+  window.removeEventListener('resize', updateMenuPosition)
+  window.removeEventListener('scroll', updateMenuPosition, true)
 }
 
 async function syncHeading() {
@@ -64,50 +194,62 @@ function scheduleSyncHeading() {
   })
 }
 
+function handleGlobalMouseDown(event: MouseEvent) {
+  if (!menuOpen.value) return
+
+  const target = event.target as Node | null
+  if (!target) return
+
+  if (rootEl.value?.contains(target)) return
+  if (menuEl.value?.contains(target)) return
+
+  closeMenu()
+}
+
+function handleGlobalKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    closeMenu()
+  }
+}
+
 watch(
   () => page.value.relativePath,
   () => {
     state.value = 'idle'
+    closeMenu()
     scheduleSyncHeading()
   },
 )
 
+watch(menuOpen, async (open) => {
+  if (open) {
+    await nextTick()
+    updateMenuPosition()
+    window.requestAnimationFrame(updateMenuPosition)
+    attachMenuPositionListeners()
+  }
+  else {
+    detachMenuPositionListeners()
+  }
+})
+
 onMounted(() => {
   scheduleSyncHeading()
+  document.addEventListener('mousedown', handleGlobalMouseDown)
+  document.addEventListener('keydown', handleGlobalKeydown)
 })
 
 onBeforeUnmount(() => {
   clearHeadingHighlight()
+  detachMenuPositionListeners()
+  document.removeEventListener('mousedown', handleGlobalMouseDown)
+  document.removeEventListener('keydown', handleGlobalKeydown)
 })
 
-const buttonText = computed(() => {
-  if (locale.value === 'en') {
-    if (state.value === 'copied') return 'Copied'
-    if (state.value === 'loading') return 'Copying...'
-    return 'Copy Markdown'
-  }
-
-  if (state.value === 'copied') return '已复制'
-  if (state.value === 'loading') return '复制中...'
-  return '复制页面'
-})
-
-const statusText = computed(() => {
-  if (locale.value === 'en') {
-    if (state.value === 'copied') return 'Copied'
-    if (state.value === 'loading') return 'Loading source...'
-    if (state.value === 'missing') return 'Markdown not found'
-    if (state.value === 'error') return 'Copy failed'
-    return ''
-  }
-
-  if (state.value === 'loading') return '获取中...'
-  if (state.value === 'missing') return '未找到本页 Markdown'
-  if (state.value === 'error') return '复制失败'
-  return ''
-})
-
-const disabled = computed(() => state.value === 'loading')
+function toggleMenu() {
+  if (disabled.value) return
+  menuOpen.value = !menuOpen.value
+}
 
 async function copyToClipboard(text: string) {
   if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
@@ -128,41 +270,81 @@ async function copyToClipboard(text: string) {
   document.body.removeChild(textarea)
 }
 
-async function copyMarkdown() {
+async function loadMarkdownSource() {
   if (!sourceKey.value || !mdSources[sourceKey.value]) {
     state.value = 'missing'
-    return
+    return null
   }
 
   state.value = 'loading'
 
   try {
-    const raw = await mdSources[sourceKey.value]()
+    return await mdSources[sourceKey.value]()
+  }
+  catch (error) {
+    console.error('Failed to load Markdown source', error)
+    state.value = 'error'
+    return null
+  }
+}
+
+function resetStateLater() {
+  window.setTimeout(() => {
+    if (state.value !== 'loading') {
+      state.value = 'idle'
+    }
+  }, 2000)
+}
+
+async function handleCopyPage() {
+  closeMenu()
+
+  const raw = await loadMarkdownSource()
+  if (!raw) return
+
+  try {
     await copyToClipboard(raw)
-
     state.value = 'copied'
-
-    window.setTimeout(() => {
-      if (state.value === 'copied') {
-        state.value = 'idle'
-      }
-    }, 2000)
+    resetStateLater()
   }
   catch (error) {
     console.error('Failed to copy Markdown source', error)
     state.value = 'error'
   }
 }
+
+async function handleViewMarkdown() {
+  closeMenu()
+
+  const raw = await loadMarkdownSource()
+  if (!raw || typeof window === 'undefined') return
+
+  const blob = new Blob([`\uFEFF${raw}`], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  window.open(url, '_blank', 'noopener,noreferrer')
+  window.setTimeout(() => URL.revokeObjectURL(url), 60 * 1000)
+
+  state.value = 'idle'
+}
+
+function handleExternalMenuClick() {
+  closeMenu()
+  state.value = 'idle'
+}
 </script>
 
 <template>
   <Teleport v-if="headingEl" :to="headingEl">
-    <span class="vp-copy-inline" :data-state="state">
+    <span ref="rootEl" class="vp-copy-inline" :data-state="state">
       <button
-        class="vp-copy-inline__btn"
+        ref="triggerEl"
+        class="vp-copy-inline__trigger"
         type="button"
         :disabled="disabled"
-        @click="copyMarkdown"
+        aria-haspopup="menu"
+        :aria-expanded="menuOpen"
+        :aria-controls="menuId"
+        @click="toggleMenu"
       >
         <svg
           class="vp-copy-inline__icon"
@@ -186,10 +368,14 @@ async function copyMarkdown() {
             stroke-linejoin="round"
           />
         </svg>
-        <span class="vp-copy-inline__label">{{ buttonText }}</span>
+        <span class="vp-copy-inline__label">{{ i18n.trigger }}</span>
+        <svg class="vp-copy-inline__caret" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5.5 7.75L10 12.25L14.5 7.75" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+        </svg>
       </button>
+
       <span
-        v-if="statusText"
+        v-if="statusText && !menuOpen"
         class="vp-copy-inline__status"
         :data-state="state"
         role="status"
@@ -198,5 +384,91 @@ async function copyMarkdown() {
         {{ statusText }}
       </span>
     </span>
+  </Teleport>
+
+  <Teleport to="body">
+    <div
+      v-if="menuOpen"
+      :id="menuId"
+      ref="menuEl"
+      class="vp-copy-inline__menu"
+      role="menu"
+      :aria-orientation="'vertical'"
+      :style="menuStyle"
+    >
+      <button class="vp-copy-inline__item" type="button" role="menuitem" @click="handleCopyPage">
+        <span class="vp-copy-inline__item-main">
+          <span class="vp-copy-inline__item-icon">📋</span>
+          <span class="vp-copy-inline__item-text">
+            <span class="vp-copy-inline__item-title">{{ i18n.copyPage }}</span>
+            <span class="vp-copy-inline__item-desc">{{ i18n.copyPageDesc }}</span>
+          </span>
+        </span>
+      </button>
+
+      <button class="vp-copy-inline__item" type="button" role="menuitem" @click="handleViewMarkdown">
+        <span class="vp-copy-inline__item-main">
+          <span class="vp-copy-inline__item-icon">📝</span>
+          <span class="vp-copy-inline__item-text">
+            <span class="vp-copy-inline__item-title">{{ i18n.viewMd }}</span>
+            <span class="vp-copy-inline__item-desc">{{ i18n.viewMdDesc }}</span>
+          </span>
+        </span>
+      </button>
+
+      <a
+        class="vp-copy-inline__item"
+        :href="llmsFullHref"
+        target="_blank"
+        rel="noopener noreferrer"
+        role="menuitem"
+        @click="handleExternalMenuClick"
+      >
+        <span class="vp-copy-inline__item-main">
+          <span class="vp-copy-inline__item-icon">📄</span>
+          <span class="vp-copy-inline__item-text">
+            <span class="vp-copy-inline__item-title">{{ i18n.llmsFull }}</span>
+            <span class="vp-copy-inline__item-desc">{{ i18n.llmsFullDesc }}</span>
+          </span>
+        </span>
+        <span class="vp-copy-inline__item-ext">↗</span>
+      </a>
+
+      <a
+        class="vp-copy-inline__item"
+        :href="claudeHref"
+        target="_blank"
+        rel="noopener noreferrer"
+        role="menuitem"
+        @click="handleExternalMenuClick"
+      >
+        <span class="vp-copy-inline__item-main">
+          <span class="vp-copy-inline__item-icon">✦</span>
+          <span class="vp-copy-inline__item-text">
+            <span class="vp-copy-inline__item-title">{{ i18n.openClaude }}</span>
+            <span class="vp-copy-inline__item-desc">{{ i18n.openClaudeDesc }}</span>
+          </span>
+        </span>
+        <span class="vp-copy-inline__item-ext">↗</span>
+      </a>
+
+      <a
+        class="vp-copy-inline__item"
+        :href="chatGptHref"
+        target="_blank"
+        rel="noopener noreferrer"
+        role="menuitem"
+        @click="handleExternalMenuClick"
+      >
+        <span class="vp-copy-inline__item-main">
+          <span class="vp-copy-inline__item-icon">◌</span>
+          <span class="vp-copy-inline__item-text">
+            <span class="vp-copy-inline__item-title">{{ i18n.openChatGPT }}</span>
+            <span class="vp-copy-inline__item-desc">{{ i18n.openChatGPTDesc }}</span>
+          </span>
+        </span>
+        <span class="vp-copy-inline__item-ext">↗</span>
+      </a>
+    </div>
   </Teleport>
 </template>

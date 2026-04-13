@@ -20,9 +20,3 @@ Follow wangEditor on [Bilibili](https://space.bilibili.com/697803545)
 - [wangEditor5 Tutorial 13 - Custom Extensions Part 2 (Long Video, Please Watch Patiently)](https://www.bilibili.com/video/BV16Y4y1A7iM/)
 
 If you need additional video tutorials, please submit feedback via [issue](https://github.com/wangeditor-next/wangEditor-next/issues).
-
-## Author's TikTok
-
-Follow the author on TikTok for programming tips!
-
-![](/image/sponsor/douyin.jpeg)

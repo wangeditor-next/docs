@@ -1,0 +1,3131 @@
+﻿# wangEditor-next English Full Docs (Raw Markdown)
+
+> This file is auto-generated and consolidates full Markdown from the English guide pages.
+> It is raw Markdown for one-shot AI context feeding (no page rendering).
+> Generated at: Apr 13, 2026, 17:34:21 (Asia/Shanghai)
+> Language: [中文 Raw Markdown](/ai/zh-guide-full.txt)
+
+## Included Files
+1. `docs/en/guide/index.md`
+2. `docs/en/guide/installation.md`
+3. `docs/en/guide/getting-started.md`
+4. `docs/en/guide/for-frame.md`
+5. `docs/en/guide/content.md`
+6. `docs/en/guide/toolbar-config.md`
+7. `docs/en/guide/editor-config.md`
+8. `docs/en/guide/csp-class-mode.md`
+9. `docs/en/guide/menu-config.md`
+10. `docs/en/guide/API.md`
+11. `docs/en/guide/node-define.md`
+12. `docs/en/guide/development.md`
+13. `docs/en/guide/i18n.md`
+14. `docs/en/guide/theme.md`
+15. `docs/en/guide/for-ts.md`
+16. `docs/en/guide/plugins.md`
+17. `docs/en/guide/video-course.md`
+
+---
+
+<!-- source: docs/en/guide/index.md -->
+
+## 1. index.md
+
+# Introduction
+
+wangEditor is a rich-text editor for web pages, open-source and free to use.
+
+It bases on [Slate.js](https://www.slatejs.org/) but not React, you can use it in any javascript code.
+
+![](/image/editor-en.png)
+
+---
+
+<!-- source: docs/en/guide/installation.md -->
+
+## 2. installation.md
+
+# Installation
+
+## Npm
+
+Install editor package
+
+```shell
+yarn add @wangeditor-next/editor
+# npm install @wangeditor-next/editor --save
+```
+
+Install React editor component (optional)
+
+```shell
+yarn add @wangeditor-next/editor-for-react
+# npm install @wangeditor-next/editor-for-react --save
+```
+
+Install Vue 2.x editor component  (optional)
+
+```shell
+yarn add @wangeditor-next/editor-for-vue2
+# npm install @wangeditor-next/editor-for-vue2 --save
+```
+
+Install Vue 3.x editor component  (optional)
+
+```shell
+yarn add @wangeditor-next/editor-for-vue@next
+# npm install @wangeditor-next/editor-for-vue@next --save
+```
+
+## CDN
+
+```html
+<!-- import css -->
+<link href="https://cdn.jsdelivr.net/npm/@wangeditor-next/editor@latest/dist/css/style.css" rel="stylesheet">
+
+<!-- import js -->
+<script src="https://cdn.jsdelivr.net/npm/@wangeditor-next/editor@latest/dist/index.min.js"></script>
+<script>
+    var E = window.wangEditor; // global variable
+</script>
+```
+
+---
+
+<!-- source: docs/en/guide/getting-started.md -->
+
+## 3. getting-started.md
+
+# Getting Started
+
+If you wanna to use wangEditor in Vue or React, please read this article first, then check [this article](./for-frame.md).
+
+## Create Empty Editor
+
+You can see [demo](https://wangeditor-next.github.io/demo/index.html?lang=en) page source code.
+
+### Import CSS and define style
+
+```html
+<link href="https://unpkg.com/@wangeditor-next/editor@latest/dist/css/style.css" rel="stylesheet">
+<style>
+  #editor—wrapper {
+    border: 1px solid #ccc;
+    z-index: 100; /* If you need */
+  }
+  #toolbar-container { border-bottom: 1px solid #ccc; }
+  #editor-container { height: 500px; }
+</style>
+```
+### customize elements style
+
+```html
+<style>
+  /* Matches all elements whose id starts with "w-e-element-paragraph-" */
+  [id^="w-e-element-paragraph-"] {
+  /* example style */
+  border:  solid #000;
+  }
+</style>
+```
+
+### Define Html Code
+
+```html
+<div id="editor—wrapper">
+    <div id="toolbar-container"><!-- toolbar --></div>
+    <div id="editor-container"><!-- editor --></div>
+</div>
+```
+
+:::tip
+- If you need **full-screen** function, `toolbar-container` and `editor-container` must have a same parent node.
+- You can separate `toolbar-container` and `editor-container`, e.g. [simulate Google doc editor](https://wangeditor-next.github.io/demo/like-qq-doc.html?lang=en).
+:::
+
+### Import JS and create editor
+
+
+```html
+<script src="https://unpkg.com/@wangeditor-next/editor@latest/dist/index.js"></script>
+<script>
+const { createEditor, createToolbar } = window.wangEditor
+
+const editorConfig = {
+    placeholder: 'Type here...',
+    onChange(editor) {
+      const html = editor.getHtml()
+      console.log('editor content', html)
+      // You can sync HTML to <textarea>
+    }
+}
+
+const editor = createEditor({
+    selector: '#editor-container',
+    html: '<p><br></p>',
+    config: editorConfig,
+    mode: 'default', // or 'simple'
+})
+
+const toolbarConfig = {}
+
+const toolbar = createToolbar({
+    editor,
+    selector: '#toolbar-container',
+    config: toolbarConfig,
+    mode: 'default', // or 'simple'
+})
+</script>
+```
+
+:::tip
+- `mode: 'default'` Integrate all wangEditor functions, see [demo](https://wangeditor-next.github.io/demo/index.html?lang=en) 
+- `mode: 'simple'` Only basic functions, but terse, see [demo](https://wangeditor-next.github.io/demo/simple-mode.html?lang=en)
+:::
+
+With the simple code above, you will create a basic editor.
+
+![](/image/editor-en.png)
+
+## Next Todo
+
+If you want a completed editor, you may need to the following work
+
+- [Handle content](./content.md) - Get content, set content, render content
+- [Toolbar config](./toolbar-config.md) - Insert a new menu, exclude some menus
+- [Editor config](./editor-config.md) - Editor life-cycles, custom **paste** event
+- [Menu config](./menu-config.md) - Config colors font-size font-family, config **upload image**
+- [Editor API](./API.md) - Control editor content and session
+
+---
+
+<!-- source: docs/en/guide/for-frame.md -->
+
+## 4. for-frame.md
+
+# For Vue React
+
+If you first-time use wangEditor, please see [Get started](./getting-started.md) it to learn basic usage.
+
+## Vue2
+
+### Demo
+
+- [Demo source](https://github.com/wangeditor-next/vue2-wangeditor-demo)
+- [Online demo](https://stackblitz.com/edit/vue2-vite-starter-hkmsif)
+
+### Installation
+
+```sh
+yarn add @wangeditor-next/editor
+# npm install @wangeditor-next/editor --save
+
+yarn add @wangeditor-next/editor-for-vue2
+# npm install @wangeditor-next/editor-for-vue2 --save
+```
+
+### Usage
+
+Template
+
+```xml
+<template>
+    <div style="border: 1px solid #ccc;">
+        <Toolbar
+            style="border-bottom: 1px solid #ccc"
+            :editor="editor"
+            :defaultConfig="toolbarConfig"
+            :mode="mode"
+        />
+        <Editor
+            style="height: 500px; overflow-y: hidden;"
+            v-model="html"
+            :defaultConfig="editorConfig"
+            :mode="mode"
+            @onCreated="onCreated"
+        />
+    </div>
+</template>
+```
+
+Script
+
+```html
+<script>
+import Vue from 'vue'
+import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue2'
+
+export default Vue.extend({
+    components: { Editor, Toolbar },
+    data() {
+        return {
+            editor: null,
+            html: '<p>hello</p>',
+            toolbarConfig: { },
+            editorConfig: { placeholder: 'Type here...' },
+            mode: 'default', // or 'simple'
+        }
+    },
+    methods: {
+        onCreated(editor) {
+            this.editor = Object.seal(editor) // Use `Object.seal`
+        },
+    },
+    mounted() {
+        // Simulate ajax async set HTMl content.
+        setTimeout(() => {
+            this.html = '<p>Async set HTML content.</p>'
+        }, 1500)
+    },
+    beforeDestroy() {
+        const editor = this.editor
+        if (editor == null) return
+        editor.destroy() // Timely destroy editor !
+    }
+})
+</script>
+```
+
+:::tip
+- Use `Object.seal()` when set `this.editor`
+- Timely destroy `editor` before vue component destroy.
+:::
+
+Import style
+
+```html
+<style src="@wangeditor-next/editor/dist/css/style.css"></style>
+```
+
+### Config
+
+You can extend toolbar and editor config in `toolbarConfig` and `editorConfig` (above code)
+- [Toolbar Config](./toolbar-config.md) - Insert a new menu, exclude some menus
+- [Editor Config](./editor-config.md) - Editor life-cycles, custom **paste** event
+- [Menus Config](./menu-config.md) - Config colors font-size font-family, config **upload image**
+
+Be careful: life-cycle functions (format like `onXxx`) which in editor's config, **you should use Vue events, not use in `editorConfig`**
+
+```xml
+<template>
+    <div style="border: 1px solid #ccc;">
+        <Toolbar ... />
+        <Editor
+            @onCreated="onCreated"
+            @onChange="onChange"
+            @onDestroyed="onDestroyed"
+            @onMaxLength="onMaxLength"
+            @onFocus="onFocus"
+            @onBlur="onBlur"
+            @customAlert="customAlert"
+            @customPaste="customPaste"
+        />
+    </div>
+</template>
+```
+
+```js
+methods: {
+    onCreated(editor) {
+        this.editor = Object.seal(editor)
+        console.log('onCreated', editor)
+    },
+    onChange(editor) { console.log('onChange', editor.children) },
+    onDestroyed(editor) { console.log('onDestroyed', editor) },
+    onMaxLength(editor) { console.log('onMaxLength', editor) },
+    onFocus(editor) { console.log('onFocus', editor) },
+    onBlur(editor) { console.log('onBlur', editor) },
+    customAlert(info: string, type: string) { window.alert(`customAlert in Vue demo\n${type}:\n${info}`) },
+    customPaste(editor, event, callback) {
+        console.log('ClipboardEvent is paste event data', event)
+        // const html = event.clipboardData.getData('text/html') // get paste html
+        // const text = event.clipboardData.getData('text/plain') // get paste text
+        // const rtf = event.clipboardData.getData('text/rtf') // get paste rtf data (word, wsp...)
+
+        // Insert some text
+        editor.insertText('xxx')
+
+        // return false ，prevent default paste behavior
+        event.preventDefault() // If you return false
+        callback(false) // You can not `return xxx` in Vue event function, use `callback`
+
+        // return true ，go on default paste behavior
+        // callback(true)
+    },
+}
+```
+
+### API
+
+You can use `this.editor` to get the `editor` instance after it's rendered, and trigger it's [APIs](./API.md).
+
+```xml
+<template>
+    <div>
+        <button @click="insertText">insert text</button>
+        <div style="border: 1px solid #ccc;">
+            <Toolbar .../>
+            <Editor .../>
+        </div>
+    </div>
+</template>
+```
+
+```js
+methods: {
+    insertText() {
+        const editor = this.editor // get editor instance
+        if (editor == null) return
+
+        // Trigger it's API or property
+        editor.insertText('hello')
+        console.log(editor.children)
+    },
+},
+```
+
+## Vue3
+
+### Demo
+
+- [Demo source](https://github.com/wangeditor-next/vue3-wangeditor-demo)
+- [Online demo](https://stackblitz.com/edit/vue3-wangeditor-demo-8emmc7)
+
+### Installation
+
+Install `@wangeditor-next/editor` and `@wangeditor-next/editor-for-vue@next`, see [Installation](./installation.md).
+
+```sh
+yarn add @wangeditor-next/editor
+# npm install @wangeditor-next/editor --save
+
+yarn add @wangeditor-next/editor-for-vue@next
+# npm install @wangeditor-next/editor-for-vue@next --save
+```
+
+### Usage
+
+Template
+
+```xml
+<template>
+    <div style="border: 1px solid #ccc">
+      <Toolbar
+        style="border-bottom: 1px solid #ccc"
+        :editor="editorRef"
+        :defaultConfig="toolbarConfig"
+        :mode="mode"
+      />
+      <Editor
+        style="height: 500px; overflow-y: hidden;"
+        v-model="valueHtml"
+        :defaultConfig="editorConfig"
+        :mode="mode"
+        @onCreated="handleCreated"
+      />
+    </div>
+</template>
+```
+
+Script
+
+```html
+<script>
+import '@wangeditor-next/editor/dist/css/style.css' // import css
+
+import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
+import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
+
+export default {
+  components: { Editor, Toolbar },
+  setup() {
+    // editor instance, use `shallowRef`
+    const editorRef = shallowRef()
+
+    // content HTML
+    const valueHtml = ref('<p>hello</p>')
+
+    // Simulate ajax async set HTML
+    onMounted(() => {
+        setTimeout(() => {
+            valueHtml.value = '<p>Ajax async set HTML.</p>'
+        }, 1500)
+    })
+
+    const toolbarConfig = {}
+    const editorConfig = { placeholder: 'Type here...' }
+
+    // Timely destroy `editor` before vue component destroy.
+    onBeforeUnmount(() => {
+        const editor = editorRef.value
+        if (editor == null) return
+        editor.destroy()
+    })
+
+    const handleCreated = (editor) => {
+      editorRef.value = editor // record editor instance
+    }
+
+    return {
+      editorRef,
+      mode: 'default', // or 'simple'
+      valueHtml,
+      toolbarConfig,
+      editorConfig,
+      handleCreated
+    };
+  }
+}
+</script>    
+```
+
+:::tip
+- Use `shallowRef` when create editor instance.
+- Timely destroy `editor` before vue component destroy.
+:::
+
+### Config
+
+You can extend toolbar and editor config in `toolbarConfig` and `editorConfig` (above code)
+- [Toolbar Config](./toolbar-config.md) - Insert a new menu, exclude some menus
+- [Editor Config](./editor-config.md) - Editor life-cycles, custom **paste** event
+- [Menus Config](./menu-config.md) - Config colors font-size font-family, config **upload image**
+
+Be careful: life-cycle functions (format like `onXxx`) which in editor's config, **you should use Vue events, not use in `editorConfig`**
+
+```xml
+<template>
+    <div style="border: 1px solid #ccc">
+      <Toolbar ... />
+      <Editor
+        @onCreated="handleCreated"
+        @onChange="handleChange"
+        @onDestroyed="handleDestroyed"
+        @onFocus="handleFocus"
+        @onBlur="handleBlur"
+        @customAlert="customAlert"
+        @customPaste="customPaste"
+      />
+    </div>
+</template>
+```
+
+```js
+const handleCreated = (editor) => {
+    editorRef.value = editor
+    console.log('created', editor)
+}
+const handleChange = (editor) => { console.log('change:', editor.children) }
+const handleDestroyed = (editor) => { console.log('destroyed', editor) }
+const handleFocus = (editor) => { console.log('focus', editor) }
+const handleBlur = (editor) => { console.log('blur', editor) }
+const customAlert = (info, type) => { alert(`Custom alert: ${type} - ${info}`) }
+const customPaste = (editor, event, callback) => {
+    console.log('ClipboardEvent is paste event data', event)
+    // const html = event.clipboardData.getData('text/html') // get paste html
+    // const text = event.clipboardData.getData('text/plain') // get paste text
+    // const rtf = event.clipboardData.getData('text/rtf') // get paste rtf data (word, wsp...)
+
+    // Insert your custom text
+    editor.insertText('xxx')
+
+    // return false ，prevent default paste behavior
+    event.preventDefault()
+    callback(false) // You can not `return xxx` in Vue event function, use `callback`
+
+    // return true ，go on default paste behavior
+    // callback(true)
+}
+
+return {
+    // others...
+
+    handleCreated,
+    handleChange,
+    handleDestroyed,
+    handleFocus,
+    handleBlur,
+    customAlert,
+    customPaste
+}
+```
+
+### API
+
+You can use `editorRef.value` to get the `editor` instance after it's rendered, and trigger it's [APIs](./API.md).
+
+```xml
+<template>
+    <div>
+        <button @click="insertText">insert text</button>
+        <div style="border: 1px solid #ccc">
+            <Toolbar ... />
+            <Editor ... />
+        </div>
+    </div>
+</template>
+```
+
+```js
+const insertText = () => {
+    const editor = editorRef.value // get editor instance, after it's rendered
+    if (editor == null) return
+
+    editor.insertText('hello world') // trigger editor API
+}
+
+return {
+    // others...
+
+    insertText
+}
+```
+
+## React
+
+### Demo
+
+- [Demo source](https://github.com/wangeditor-next/react-wangeditor-demo)
+- [Online demo](https://stackblitz.com/edit/react-4osjqn)
+
+### Installation
+
+```sh
+yarn add @wangeditor-next/editor
+# npm install @wangeditor-next/editor --save
+
+yarn add @wangeditor-next/editor-for-react
+# npm install @wangeditor-next/editor-for-react --save
+```
+
+### Usage
+
+```tsx
+import '@wangeditor-next/editor/dist/css/style.css' // import css
+
+import React, { useState, useEffect } from 'react'
+import { Editor, Toolbar } from '@wangeditor-next/editor-for-react'
+import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor-next/editor'
+
+function MyEditor() {
+    // editor instance
+    const [editor, setEditor] = useState<IDomEditor | null>(null)  // TS syntax
+    // const [editor, setEditor] = useState(null)                  // JS syntax
+
+    // editor content
+    const [html, setHtml] = useState('<p>hello</p>')
+
+    // Simulate ajax async set html
+    useEffect(() => {
+        setTimeout(() => {
+            setHtml('<p>hello&nbsp;world</p>')
+        }, 1500)
+    }, [])
+
+    const toolbarConfig: Partial<IToolbarConfig> = { }  // TS syntax
+    // const toolbarConfig = { }                        // JS syntax
+
+    const editorConfig: Partial<IEditorConfig> = {  // TS syntax
+    // const editorConfig = {                       // JS syntax
+        placeholder: 'Type here...',
+    }
+
+    // Timely destroy editor, important!
+    useEffect(() => {
+        return () => {
+            if (editor == null) return
+            editor.destroy()
+            setEditor(null)
+        }
+    }, [editor])
+
+    return (
+        <>
+            <div style={{ border: '1px solid #ccc', zIndex: 100}}>
+                <Toolbar
+                    editor={editor}
+                    defaultConfig={toolbarConfig}
+                    mode="default"
+                    style={{ borderBottom: '1px solid #ccc' }}
+                />
+                <Editor
+                    defaultConfig={editorConfig}
+                    value={html}
+                    onCreated={setEditor}
+                    onChange={editor => setHtml(editor.getHtml())}
+                    mode="default"
+                    style={{ height: '500px', overflowY: 'hidden' }}
+                />
+            </div>
+            <div style={{ marginTop: '15px' }}>
+                {html}
+            </div>
+        </>
+    )
+}
+
+export default MyEditor
+```
+
+### Config
+
+You can extend toolbar and editor config in `toolbarConfig` and `editorConfig` (above code)
+- [Toolbar Config](./toolbar-config.md) - Insert a new menu, exclude some menus
+- [Editor Config](./editor-config.md) - Editor life-cycles, custom **paste** event
+- [Menus Config](./menu-config.md) - Config colors font-size font-family, config **upload image**
+
+### API
+
+You can get the `editor` state value, and trigger it's [APIs](./API.md).
+
+```jsx
+function insertText() {
+    if (editor == null) return
+    editor.insertText('hello')
+}
+
+return (
+    <>
+        <button onClick={insertText}>insert text</button>
+        <div style={{ border: '1px solid #ccc', zIndex: 100}}>
+            <Toolbar ... />
+            <Editor ... />
+        </div>
+    </>
+)
+```
+
+---
+
+<!-- source: docs/en/guide/content.md -->
+
+## 5. content.md
+
+# Content
+
+## Get Content
+
+### Get HTML and Text
+
+Use `editor.getHtml()` to get HTML content, see [demo](https://wangeditor-next.github.io/demo/get-html.html?lang=en). Use `editor.getText()` to get text content.
+
+PS: HTML format is recommended.
+
+### Get JSON
+
+Use `editor.children` to get JSON content.
+
+You can convert JSON to HTML or text format in browser and nodejs.<br>
+If in nodejs, you should exec `yarn add jsdom global-jsdom` firstly, then `require('global-jsdom/register')` in front of the below codes.
+
+```js
+const editor = createEditor({ content }) // `content` is JSON content
+const html = editor.getHtml()
+const text = editor.getText()
+```
+
+### Custom Style
+
+`editor.getHtml()` can only get pure HTML, there is no inline styles. You need to define your custom style. See some demos:
+- [Get and render HTML](https://wangeditor-next.github.io/demo/get-html.html?lang=en)
+- [Custom CSS style](https://wangeditor-next.github.io/demo/css/view.css)
+
+You should use [Prism.js](https://prismjs.com/) to highlight code block by yourself. See [demo](https://wangeditor-next.github.io/demo/code-highlight.html?lang=en).
+
+## Set Content
+
+You can set your custom content when creating an editor.
+
+### Set HTML
+
+<b style="color: red;">Be careful: wangEditor can only understand the HTML format from `editor.getHtml()`, but not all HTML formats.</b>
+
+For instance, wangEditor can understand `<strong>hello</strong>`, but can not understand `<span style="font-weight:bold;"></span>`.
+
+### Set HTML when create editor
+
+```js
+const editor = createEditor({
+  html: '<p>hello <strong>world</strong></p>', // html content, got from `editor.getHtml()`
+  // other props ...
+})
+```
+
+### Set HTML after create editor
+
+See [demo](https://wangeditor-next.github.io/demo/set-html.html?lang=en)
+
+```js
+editor.setHtml('<p>hello <strong>world</strong></p>')
+```
+
+:::tip
+`setHtml` is mainly used for re-write editor HTML content which got by `editor.getHtml()`.<br>
+If you want to insert some HTML, use [dangerouslyInsertHtml](./API.md#dangerouslyinserthtml) please.
+:::
+
+### Set Text
+
+```js
+// 1. Convert text to HTML format
+const text = '...' // text content
+const html = text.split(/\n/).map(line => `<p>${line}</p>`).join('\n')
+
+// 2. set HTML
+const editor = createEditor({
+  html,
+  // other props ...
+})
+
+// 3. or setHtml after create editor
+// editor.setHtml(html)
+```
+
+### Set JSON
+
+```js
+const editor = createEditor({
+  content: [...], // JSON content, got from `editor.children`
+  // other props ...
+})
+```
+
+### Ajax async set content
+
+You can create editor after ajax success callback.
+
+```js
+// pseudo code
+import { IDomEditor } from '@wangeditor-next/editor'
+
+let editor: IDomEditor | null = null  // TS syntax
+// let editor = null                  // JS syntax
+
+ajax(url, res => {
+  editor = createEditor({
+    // content or html
+    // other props...
+  })
+})
+```
+
+::: tip
+Goto [API](./API.md) to checkout more content APIs.
+:::
+
+---
+
+<!-- source: docs/en/guide/toolbar-config.md -->
+
+## 6. toolbar-config.md
+
+# Toolbar Config
+
+If you first-time use wangEditor, please see [Get Started](./getting-started.md) it to learn basic usage.
+
+```ts{5}
+import { IToolbarConfig } from '@wangeditor-next/editor'
+
+const toolbarConfig: Partial<IToolbarConfig> = {   // TS syntax
+// const toolbarConfig = {                         // JS syntax
+    /* your toolbar config */
+}
+
+// create toolbar, or Vue React <Toolbar>
+```
+
+## getConfig
+
+Use `toolbar.getConfig()` to checkout default toolbar config.<br>
+If you use Vue or React, you can get `toolbar` instance by these codes.
+
+```ts
+import { DomEditor } from '@wangeditor-next/editor'
+const toolbar = DomEditor.getToolbar(editor)
+```
+
+## toolbarKeys
+
+**Rewrite** toolbar menus, re-order and re-group.
+
+- `toolbar.getConfig().toolbarKeys` checkout default `toolbarKeys` config.
+- `editor.getAllMenuKeys()` checkout all embedded menu keys.
+
+```ts
+toolbarConfig.toolbarKeys = [
+  // menu key
+  'headerSelect',
+
+  // split line
+  '|',
+
+  // menu key
+  'bold',
+  'italic',
+
+  // menu group, includes many menu
+  {
+    key: 'group-more-style', // required, must start with `group-`
+    title: 'more', // required
+    iconSvg: '<svg>....</svg>', // optional
+    menuKeys: ['through', 'code', 'clearStyle'] // required, children menu keys
+  },
+  // other menu keys...
+]
+```
+
+## insertKeys
+
+You can continue to insert new menus based on the current `toolbarKeys`, such as custom extended menus
+
+```ts
+toolbarConfig.insertKeys = {
+  index: 5, // The insertion position is based on the current toolbarKeys
+  keys: ['menu-key1', 'menu-key2']
+}
+```
+
+`insertKeys` supports multiple insertion positions。
+
+```ts
+toolbarConfig.insertKeys = [
+  {
+    index: 5,
+    keys: ['menu-key1', 'menu-key2']
+  },
+  {
+    index: 10,
+    keys: ['menu-key3', 'menu-key4']
+  }
+]
+```
+
+`insertKeys` supports rewriting menus at specified locations, such as:
+
+```ts
+toolbarConfig.insertKeys = [
+  {
+    index: 5,
+    keys: [],
+    /** optional item, rewrite menu config */
+    replaceFn: (menu) => { /** Menu configuration with index=5 */
+      return menu; /** A new configuration must be returned that meets the configuration requirements */
+    }
+  }
+]
+```
+
+In cases where there are both insertion and rewriting menus, priority should be given to executing modifications before inserting, such as:
+
+```ts
+toolbarConfig.insertKeys = [
+  {
+    index: 5,
+    keys: ['menu-key1'], /** Perform insertion again */ 
+    replaceFn: (menu) => { /** Perform modifications first */
+      return menu; /** A new configuration must be returned that meets the configuration requirements */
+    }
+  }
+]
+```
+
+:::tip
+Note: `insertKeys` modifies the array of menu configurations, so when modifying multiple menus, you need to pay attention to the array index. <br>
+:::
+
+
+
+## excludeKeys
+
+You may only want to exclude some menus, and keep the rest.
+
+```ts
+toolbarConfig.excludeKeys = [
+  'headerSelect',
+  'italic',
+  'group-more-style' // exclude menu-group
+]
+```
+
+If you want to exclude a menu group, you can find it's key by `toolbar.getConfig().toolbarKeys`
+
+:::tip
+In the editor.onCreated life cycle, the toolbar instance has not been created yet, so the toolbar instance cannot be obtained in created.
+:::
+
+![](/image/exclude-group-en.png)
+
+## modalAppendToBody
+
+You may want to append the modal when a menu clicked to `<body>`, and custom its position style.
+
+![](/image/modal-appendTo-body-en.png)
+
+```ts{1}
+toolbarConfig.modalAppendToBody = true
+
+// Create toolbar and editor
+
+// Observe `modalOrPanelShow` and `modalOrPanelHide` custom event, then set modal style, and even you can show a mask <div>
+editor.on('modalOrPanelShow', modalOrPanel => {
+    if (modalOrPanel.type !== 'modal') return
+    const { $elem } = modalOrPanel // modal element
+
+    // set modal style (position, z-index)
+    // show a mask <div>
+})
+editor.on('modalOrPanelHide', () => {
+    // hide your mask <div>
+})
+```
+
+You could checkout [example source code](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/editor/examples/modal-appendTo-body.html).
+
+---
+
+<!-- source: docs/en/guide/editor-config.md -->
+
+## 7. editor-config.md
+
+# Editor Config
+
+If you first-time use wangEditor, please see [Get Started](./getting-started.md) it to learn basic usage.
+
+
+```ts{5}
+import { IEditorConfig } from '@wangeditor-next/editor'
+
+const editorConfig: Partial<IEditorConfig> = {  // TS syntax
+// const editorConfig = {                       // JS syntax
+    /* editor config */
+}
+
+// create editor, or Vue React <Editor> component
+```
+
+:::tip
+You can use `editor.getConfig()` to checkout editor's default config
+:::
+
+## placeholder
+
+```ts
+editorConfig.placeholder = 'Type your text'
+```
+
+## readOnly
+
+Default value is `false`. <br>
+You can use `editor.enable()` and `editor.disable()` to toggle readOnly. see [Editor API](./API.md).
+
+```ts
+editorConfig.readOnly = true
+```
+
+## autoFocus
+
+Default value is `true`.
+
+```ts
+editorConfig.autoFocus = false
+```
+
+## scroll
+
+Default value is `true`. You can scroll editor area.
+
+If you set `false`, **do not set `editor-container` a fixed height**, just set `min-height`.
+
+```ts
+editorConfig.scroll = false
+```
+
+:::tip
+When you need to set `false`?
+- Editor height increases automatically
+- Want a Google doc style, see [Demo](https://wangeditor-next.github.io/demo/like-qq-doc.html?lang=en)
+:::
+
+## textStyleMode
+
+Configure text/paragraph style export mode.
+
+```ts
+editorConfig.textStyleMode = 'class' // 'inline' | 'class'
+```
+
+- `inline` (default): output inline `style`
+- `class`: output `class + data-w-e-*` for strict CSP scenarios
+
+For full usage and migration guidance, see [CSP Class Style Mode](./csp-class-mode.md).
+
+## classStylePolicy
+
+When `textStyleMode = 'class'`, configure how unsupported tokens are handled.
+
+```ts
+editorConfig.classStylePolicy = 'preserve-data'
+// 'preserve-data' | 'fallback-inline' | 'strict'
+```
+
+- `preserve-data` (default): keep `data-w-e-*`
+- `fallback-inline`: fallback to inline style
+- `strict`: throw error directly
+
+## styleClassTokens
+
+Register extra accepted tokens for class mode.
+
+```ts
+editorConfig.styleClassTokens = {
+    color: ['rgb(1, 2, 3)'],
+    fontSize: ['20px'],
+}
+```
+
+:::tip
+`styleClassTokens` only registers tokens, it does not inject your custom CSS.
+:::
+
+## onClassStyleUnsupported
+
+Callback for unsupported tokens in class mode.
+
+```ts
+editorConfig.onClassStyleUnsupported = payload => {
+    // payload: { type, value, scene, fallback, message }
+    console.warn(payload)
+}
+```
+
+## maxLength onMaxLength
+
+See [demo](https://wangeditor-next.github.io/demo/max-length.html?lang=en).
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.maxLength = 1000
+editorConfig.onMaxLength = function (editor: IDomEditor) {   // TS syntax
+// editorConfig.onMaxLength = function (editor) {            // JS syntax
+    // trigger this when exceed maxlength
+}
+```
+
+:::tip
+If you have no strong demand, do not set `maxLength`.<br>
+Cause it may affect performance when text is too large.
+:::
+
+## hoverbarKeys
+
+You can use `editor.getConfig().hoverbarKeys` to checkout default config.
+
+![](/image/hoverbar-en.png)
+
+:::tip
+If you only unwanted hoverbar when select text, set `mode: 'simple'` when creating editor
+:::
+
+### Use element type
+
+You can config hoverbar menu keys by element type.<br>
+
+- You can checkout every element's type by `editor.children` , see the picture below
+- You can use `editor.getAllMenuKeys()` to checkout all embedded menu keys
+
+![](/image/elem-type-en.png)
+
+```ts
+editorConfig.hoverbarKeys = {
+    'link': {
+        // rewrite link element's hoverbar
+        menuKeys: ['editLink', 'unLink', 'viewLink'],
+    },
+    'image': {
+        // clear image element's hoverbar
+        menuKeys: [],
+    },
+    // others...
+}
+```
+
+### Custom match function
+
+You can also custom a match function instead of use element type.
+
+```ts
+import { SlateNode, IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.hoverbarKeys = {
+    'text': {
+        match: (editor: IDomEditor, n: SlateNode) => {    // TS syntax
+        // match: (editor, n) => {                        // JS syntax
+            // match your node exactly
+        },
+        menuKeys: [ ... ], // custom your menu keys
+    },
+    // others...
+}
+```
+
+You can see [source code](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/editor/src/init-default-config/config/hoverbar.ts) of all default hoverbar keys config.
+
+## onCreated
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.onCreated = (editor: IDomEditor) => {   // TS syntax
+// editorConfig.onCreated = (editor) => {            // JS syntax
+    // editor created
+}
+```
+
+## onChange
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.onChange = (editor: IDomEditor) => {  // TS syntax
+// editorConfig.onChange = (editor:) => {             // JS syntax
+    // editor's content or selection changed
+    console.log('content', editor.children)
+}
+```
+
+## onDestroyed
+
+You can use `editor.destroy()` to destroy editor. see [API](./API.md).
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.onDestroyed = (editor: IDomEditor) => {  // TS syntax
+// editorConfig.onDestroyed = (editor) => {           // JS syntax
+    // editor destroyed
+}
+```
+
+## onFocus
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.onFocus = (editor: IDomEditor) => {  // TS syntax
+// editorConfig.onFocus = (editor) => {           // JS syntax
+    // editor focused
+}
+```
+
+## onBlur
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.onBlur = (editor: IDomEditor) => {  // TS syntax
+// editorConfig.onBlur = (editor) => {           // JS syntax
+    // editor blur
+}
+```
+
+## customPaste
+
+You can prevent default paste event, redefine your custom paste logic.
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.customPaste = (editor: IDomEditor, event: ClipboardEvent): boolean => {  // TS syntax
+// editorConfig.customPaste = (editor, event) => {                                    // JS syntax
+
+    // event is ClipboardEvent type, see https://developer.mozilla.org/zh-CN/docs/Web/API/ClipboardEvent
+
+    // const html = event.clipboardData.getData('text/html') // get paste html
+    // const text = event.clipboardData.getData('text/plain') // get paste text
+    // const rtf = event.clipboardData.getData('text/rtf') // get paste rtf data (word, wsp...)
+
+    // insert your custom text (sync)
+    editor.insertText('xxx')
+
+    // insert your custom text (async)
+    setTimeout(() => {
+        editor.insertText('yy')
+    }, 1000)
+
+    // 1. prevent default paste event.
+    event.preventDefault()
+    return false
+
+    // 2. continue default paste event.
+    // return true
+}
+```
+
+## customCopy
+
+Custom copy can modify the editor's copy results.
+
+```ts
+import { IDomEditor } from '@wangeditor-next/editor'
+
+editorConfig.customCopy = (editor: IDomEditor, event: ClipboardEvent): void => {     // TS syntax
+// editorConfig.customCooy = (editor, event) => {                                       // JS syntax
+    const originalText = event.clipboardData.getData('text/plain');
+    const originalHtml = event.clipboardData.getData('text/html');
+   // Modify or expand content
+    const modifiedText = `${originalText}\n---\nAdded text`;
+    const modifiedHtml = `${originalHtml}<hr><p>Added HTML content</p>`;
+    // Write the modified content back to the clipboard
+    event.clipboardData.setData('text/plain', modifiedText);
+    event.clipboardData.setData('text/html', modifiedHtml);
+}
+```
+
+## customAlert
+
+Redefine your custom editor alert.
+
+```ts
+import { message } from 'antd'
+
+editorConfig.customAlert = (s: string, t: string) => {   // TS syntax
+// editorConfig.customAlert = (s, t) => {                // JS syntax
+    switch (t) {
+        case 'success':
+            message.success(s)
+            break
+        case 'info':
+            message.info(s)
+            break
+        case 'warning':
+            message.warning(s)
+            break
+        case 'error':
+            message.error(s)
+            break
+        default:
+            message.info(s)
+            break
+    }
+}
+```
+
+## EXTEND_CONF
+
+Use in third-party plugin, like [mention plugin](https://github.com/wangeditor-next/wangEditor-plugin-mention/blob/main/README-en.md).
+
+---
+
+<!-- source: docs/en/guide/csp-class-mode.md -->
+
+## 8. csp-class-mode.md
+
+# CSP Class Style Mode
+
+For strict CSP environments (for example, inline `style` is blocked), use `textStyleMode: 'class'` so style output uses `class + data-w-e-*`.
+
+:::tip
+The default mode is still `inline`, so existing projects keep working without changes.
+:::
+
+## Quick Start
+
+```ts
+import { createEditor, IEditorConfig } from '@wangeditor-next/editor'
+
+const editorConfig: Partial<IEditorConfig> = {
+    textStyleMode: 'class',
+    classStylePolicy: 'preserve-data',
+    styleClassTokens: {
+        color: ['rgb(1, 2, 3)'],
+    },
+    onClassStyleUnsupported(payload) {
+        console.warn('[class-style-unsupported]', payload)
+    },
+}
+
+const editor = createEditor({
+    selector: '#editor-container',
+    config: editorConfig,
+    html: '<p><br></p>',
+})
+```
+
+Make sure the editor stylesheet is loaded (it includes built-in token class styles):
+
+```html
+<link
+  href="https://unpkg.com/@wangeditor-next/editor@latest/dist/css/style.css"
+  rel="stylesheet"
+>
+```
+
+## Config Fields
+
+### `textStyleMode`
+
+- `inline` (default): style output goes to `style`.
+- `class`: style output goes to `class + data-w-e-*`.
+
+### `classStylePolicy`
+
+Only works when `textStyleMode: 'class'`.
+
+- `preserve-data` (default): keep `data-w-e-*` only, no class/inline (round-trip safe, may not render visual style).
+- `fallback-inline`: keep `data-w-e-*` and fallback to inline style (render-first behavior).
+- `strict`: throw on unsupported tokens (no silent degradation).
+
+### `styleClassTokens`
+
+- Registers additional accepted tokens.
+- It only registers tokens and does not inject your custom CSS automatically.
+
+### `onClassStyleUnsupported`
+
+Called when an unsupported token is detected. Useful for logging and monitoring.
+
+Payload fields:
+
+- `type`
+- `value`
+- `scene` (`render` or `toHtml`)
+- `fallback` (`preserve-data` / `inline` / `throw`)
+- `message`
+
+## Supported Text Style Types
+
+- `color`
+- `bgColor`
+- `fontSize`
+- `fontFamily`
+- `textAlign`
+- `lineHeight`
+- `indent`
+
+## CSS for Custom Tokens
+
+For custom tokens, prefer rules based on `data-w-e-*` instead of hash class names:
+
+```css
+[data-w-e-color="rgb(1, 2, 3)"] { color: rgb(1, 2, 3); }
+[data-w-e-font-size="20px"] { font-size: 20px; }
+[data-w-e-line-height="2"] { line-height: 2; }
+```
+
+## Module Behavior
+
+- `basic-modules`: text styles follow policy output (class/data/inline).
+- `list-module`: list marker color class is `w-e-list-color-*` and keeps `data-w-e-color`.
+- `table-module`: `border-style` in class mode follows policy (single-value class support, complex values degrade by policy).
+- `video-module`, `image`, `plugin-float-image`: alignment and size prefer class/data output.
+
+## Migration Suggestion
+
+1. Start in test env with `textStyleMode: 'class'` + `classStylePolicy: 'preserve-data'`.
+2. Observe `onClassStyleUnsupported` logs, then add `styleClassTokens` and matching CSS.
+3. Move to `fallback-inline` or `strict` based on your production policy.
+
+---
+
+<!-- source: docs/en/guide/menu-config.md -->
+
+## 9. menu-config.md
+
+# Menu Config
+
+## General Way
+
+### Get a Menu Key
+
+Use `editor.getAllMenuKeys()` to checkout all menus key, and find your menu key.
+
+### Get the Menu Default Config
+
+When you find a menu key, you can get this menu's default config.
+
+```js
+editor.getMenuConfig('uploadImage') // `uploadImage` is a menu key
+```
+
+### Change the Menu Config
+
+```ts
+import { IEditorConfig } from '@wangeditor-next/editor'
+
+// add a MENU_CONF prop
+const editorConfig: Partial<IEditorConfig> = {  // TS syntax
+// const editorConfig = {                       // JS syntax
+    MENU_CONF: {}
+
+    // other props...
+}
+
+// change `uploadImage` menu config
+editorConfig.MENU_CONF['uploadImage'] = {
+    server: '/api/upload-image',
+    fieldName: 'custom-field-name'
+    // other config...
+}
+
+// change other menu's config
+editorConfig.MENU_CONF['otherMenuKey'] = {
+    // config...
+}
+
+// create editor, or Vue React <Editor> component
+```
+### change the default Menu Conifg
+
+#### Change the default font, font size, and line height
+
+```ts
+    const jsonContent = [
+        {
+          type: 'paragraph',
+          lineHeight: '1.5',
+          children: [
+            { text: 'hello world', fontFamily: '黑体', fontSize: '32px' }
+          ]
+        },
+    ]
+```
+
+The Vue and React Editor component has the defaultContent attribute, which can be passed in the above jsonContent
+
+HTML Format 
+
+```ts
+    const htmlContent = '<p style="line-height: 1.5;"><span style="font-size: 32px; font-family: 黑体;">hello world</span></p>'
+``` 
+
+The Vue Editor component can use the v-model attribute to pass in HTML content, and the React Editor component can use the value attribute to pass in HTML content.
+
+- [Vue changes the default font size and line height](https://codesandbox.io/p/sandbox/vue2-wangeditor-demo-forked-67fh5s)
+- [React changes the default font size and line height](https://codesandbox.io/p/sandbox/react-wangeditor-defaultfont-59c48n)
+
+#### change the defalut icon
+
+Add the iconSvg attribute to the corresponding toolbar and hoverbar keys in the menu conf and fill in the corresponding svg string.
+
+~~~JavaScript
+MEEN_CONF = {
+  // toolbar text color key
+  color: {
+    iconSvg:
+      '<svg viewBox="0 0 1024 1024"><path d="M0 64v896h1024V64H0z m384 576v-192h256v192h-256z m256 64v192h-256v-192h256z m0-512v192h-256V192h256zM320 192v192H64V192h256z m-256 256h256v192H64v-192z m640 0h256v192h-256v-192z m0-64V192h256v192h-256zM64 704h256v192H64v-192z m640 192v-192h256v192h-256z"></path></svg>'
+    ,
+  },
+  // hoverbar image width key
+  imageWidth30: {
+    iconSvg: '<svg viewBox="0 0 1024 1024"><path d="M0 64v896h1024V64H0z m384 576v-192h256v192h-256z m256 64v192h-256v-192h256z m0-512v192h-256V192h256zM320 192v192H64V192h256z m-256 256h256v192H64v-192z m640 0h256v192h-256v-192z m0-64V192h256v192h-256zM64 704h256v192H64v-192z m640 192v-192h256v192h-256z"></path></svg>',
+  },
+}
+~~~
+
+## Color
+
+```ts
+// font colors
+editorConfig.MENU_CONF['color'] = {
+    colors: ['#000', '#333', '#666']
+}
+
+// background colors
+editorConfig.MENU_CONF['bgColor'] = {
+    colors: ['#000', '#333', '#666']
+}
+```
+
+## Font Size
+
+```ts
+editorConfig.MENU_CONF['fontSize'] = {
+    fontSizeList: [
+        // Support two format
+        //   1. string
+        //   2. object like { name: 'xxx', value: 'xxx' }
+
+        '12px',
+        '16px',
+        { name: '24px', value: '24px' },
+        '40px',
+    ]
+}
+```
+
+## Font-Family
+
+:::tip
+Some fonts are not commercially available.
+:::
+
+```ts
+editorConfig.MENU_CONF['fontFamily'] = {
+    fontFamilyList: [
+        // Support two format
+        //   1. string
+        //   2. object like { name: 'xxx', value: 'xxx' }
+
+        'Arial',
+        'Tahoma',
+        'Verdana',
+        { name: 'Tahoma', value: 'Tahoma' },
+    ]
+}
+```
+
+## Line Height
+
+```ts
+editorConfig.MENU_CONF['lineHeight'] = {
+    lineHeightList: ['1', '1.5', '2', '2.5']
+}
+```
+
+## Emotion
+
+```ts
+editorConfig.MENU_CONF['emotion'] = {
+    emotions: '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉'.split(' ') // 数组
+}
+```
+
+## Link
+
+- `checkLink` Check link url
+- `parseLinkUrl` Parse link url
+
+```ts
+function customCheckLinkFn(text: string, url: string): string | boolean | undefined {  // TS syntax
+// function customCheckLinkFn(text, url) {                                             // JS syntax
+    if (!url) {
+        return
+    }
+    if (url.indexOf('http') !== 0) {
+        return 'Link must includes http/https'
+    }
+    return true
+
+    // The following three way, you should choose one:
+    // 1. return true. Means check successful, editor will insert this link
+    // 2. return a string. Means check failed, need to alert some text info
+    // 3. return undefined. Means check failed, no need to alert some text info
+}
+
+function customParseLinkUrl(url: string): string {   // TS syntax
+// function customParseLinkUrl(url) {                // JS syntax
+    if (url.indexOf('http') !== 0) {
+        return `http://${url}`
+    }
+    return url
+}
+
+// insertLink menu config
+editorConfig.MENU_CONF['insertLink'] = {
+    checkLink: customCheckLinkFn, // support `async function`
+    parseLinkUrl: customParseLinkUrl, // support `async function`
+}
+// editLink menu config
+editorConfig.MENU_CONF['editLink'] = {
+    checkLink: customCheckLinkFn, // support `async function`
+    parseLinkUrl: customParseLinkUrl, // support `async function`
+}
+```
+
+## Image
+
+If you use Typescript, you need define image element type.
+
+```ts
+// create a `.d.ts` file
+
+import { SlateElement } from '@wangeditor-next/editor'
+
+type ImageElement = SlateElement & {
+    src: string
+    alt: string
+    url: string
+    href: string
+}
+```
+
+Image menu config.
+
+```ts
+function customCheckImageFn(src: string, alt: string, url: string): boolean | undefined | string {  // TS syntax
+// function customCheckImageFn(src, alt, url) {                                                     // JS syntax
+    if (!src) {
+        return
+    }
+    if (src.indexOf('http') !== 0) {
+        return 'Image src must start width http/https'
+    }
+    return true
+
+    // The following three way, you should choose one:
+    // 1. return true. Means check successful, editor will insert this image
+    // 2. return a string. Means check failed, need to alert some text info
+    // 3. return undefined. Means check failed, no need to alert some text info
+}
+
+function customParseImageSrc(src: string): string {  // TS syntax
+// function customParseImageSrc(src) {               // JS syntax
+    if (src.indexOf('http') !== 0) {
+        return `http://${src}`
+    }
+    return src
+}
+
+// insertImage menu config
+editorConfig.MENU_CONF['insertImage'] = {
+    onInsertedImage(imageNode: ImageElement | null) {  // TS syntax
+    // onInsertedImage(imageNode) {                    // JS syntax
+        if (imageNode == null) return
+
+        const { src, alt, url, href } = imageNode
+        console.log('inserted image', src, alt, url, href)
+    },
+    checkImage: customCheckImageFn, // support `async function`
+    parseImageSrc: customParseImageSrc, // support `async function`
+}
+// editImage menu config
+editorConfig.MENU_CONF['editImage'] = {
+    onUpdatedImage(imageNode: ImageElement | null) {   // TS syntax
+    // onUpdatedImage(imageNode) {                     // JS syntax
+        if (imageNode == null) return
+
+        const { src, alt, url } = imageNode
+        console.log('updated image', src, alt, url)
+    },
+    checkImage: customCheckImageFn, // support `async function`
+    parseImageSrc: customParseImageSrc, // support `async function`
+}
+```
+
+## Upload Image
+
+See [demo](https://github.com/wangeditor-next/server).
+
+```ts{2}
+editorConfig.MENU_CONF['uploadImage'] = {
+    // menu config...
+}
+```
+
+### Server Address
+
+Required.
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+     server: '/api/upload',
+}
+```
+
+If uploaded successfully, the server must return data like this format:
+
+```ts
+{
+    "errno": 0, // it's number, not string
+    "data": {
+        "url": "xxx", // image src, required
+        "alt": "yyy", // image alt, optional
+        "href": "zzz" // image link, optional
+    }
+}
+```
+
+If uploaded failed, the server must return data like this format:
+
+```ts
+{
+    "errno": 1, // number, not equal 0
+    "message": 'your failed message'
+}
+```
+
+:::tip
+If your server's response body is not above format, you can use the following `customInsert`.
+:::
+
+### Basic Config
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    // form-data fieldName ，default 'wangeditor-uploaded-image'
+    fieldName: 'your-custom-name',
+
+    // max size of one file
+    maxFileSize: 1 * 1024 * 1024, // 1M
+
+    // max length of uploaded files
+    maxNumberOfFiles: 10,
+
+    // file types, default `['image/*']`. If unwanted, you can set []
+    allowedFileTypes: ['image/*'],
+
+    // custom upload params, like token
+    meta: {
+        token: 'xxx',
+        otherKey: 'yyy'
+    },
+
+    // Embed meta in url, not in formData. Default is false
+    metaWithUrl: false,
+
+    // custom http headers
+    headers: {
+        Accept: 'text/x-json',
+        otherKey: 'xxx'
+    },
+
+    // send cookie when cross-origin
+    withCredentials: true,
+
+    // timeout, default 10s
+    timeout: 5 * 1000, // 5 秒
+}
+```
+
+### Callbacks
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    onBeforeUpload(file: File) {   // TS syntax
+    // onBeforeUpload(file) {      // JS syntax
+        // `file` is selected file, format like { key: file }
+        return file
+
+        // You can return:
+        // 1. return the file object or a new file object. Editor will upload it.
+        // 2. return false. Stop upload this file.
+    },
+
+    onProgress(progress: number) {   // TS syntax
+    // onProgress(progress) {        // JS syntax
+        // progress is a number 0-100
+        console.log('progress', progress)
+    },
+
+    // One file upload success
+    onSuccess(file: File, res: any) {     // TS syntax
+    // onSuccess(file, res) {             // JS syntax
+        console.log(`${file.name} uploaded`, res)
+    },
+
+    // One file upload failed
+    onFailed(file: File, res: any) {     // TS syntax
+    // onFailed(file, res) {             // JS syntax
+        console.log(`${file.name} failed`, res)
+    },
+
+    // upload error or timeout
+    onError(file: File, err: any, res: any) {  // TS syntax
+    // onError(file, err, res) {               // JS syntax
+        console.log(`${file.name} error`, err, res)
+    },
+}
+```
+
+### Custom Functions
+
+If you use Type script, you should define a function type first.
+
+```ts
+type InsertFnType = (url: string, alt: string, href: string) => void
+```
+
+#### Custom Insert
+
+If your server response body is not above format, you can use `customInsert` to insert image.
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    customInsert(res: any, insertFn: InsertFnType) {   // TS syntax
+    // customInsert(res, insertFn) {                   // JS syntax
+
+        // `res` is server response
+
+        // Get image's url, alt, href in res, and insert to editor
+        insertFn(url, alt, href)
+    },
+}
+```
+
+#### Custom Upload
+
+If you unwanted wangEditor's embedded upload function, you can use `customUpload` to upload images yourself.
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    async customUpload(file: File, insertFn: InsertFnType) {   // TS syntax
+    // async customUpload(file, insertFn) {                    // JS syntax
+
+        // `file` is your selected file
+
+        // upload images yourself, and get image's url, alt, href
+
+        // insert image
+        insertFn(url, alt, href)
+    }
+}
+```
+
+#### Custom Select Images
+
+If you unwanted wangEditor's embedded select function, you can use `customBrowseAndUpload` to implement by yourself.
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    customBrowseAndUpload(insertFn: InsertFnType) {  // TS syntax
+    // customBrowseAndUpload(insertFn) {             // JS syntax
+        // 1. select files by yourself
+        // 2. upload files, and get image's url, alt, href
+        // 3. insert image
+        insertFn(url, alt, href)
+    }
+}
+```
+
+### Base64 insert images
+
+```ts
+editorConfig.MENU_CONF['uploadImage'] = {
+    // other props...
+
+    // If image's size less than this, then insert image by base64 format. Default 0.
+    base64LimitSize: 5 * 1024 // 5kb
+}
+```
+
+### Get Deleted Images
+
+This is a common requirement.<br>
+You upload an image to the server, then you delete this image. You want to get this deleted image and delete it from the server when you save content.
+
+- Use [onInsertedImage](#image) to collect all images, record to `imageList1`
+- When you save content, use `editor.getElemsByType('image')` to get rest images, record to `imageList2`
+- Diff `imageList1` and `imageList2`, then you will get deleted images
+
+You may wonder: If I can get this image when it just is deleted, but when save content?<br>
+You could not do this. Because the image which is deleted may restore by you **redo** or **undo** the editor.
+
+## Video
+
+If you use Typescript, you need to define video element type first.
+
+```ts
+// create a `.d.ts` file
+
+import { SlateElement } from '@wangeditor-next/editor'
+
+type VideoElement = SlateElement & {
+    src: string
+    poster?: string
+}
+```
+
+Menu config.
+
+```ts
+function customCheckVideoFn(src: string, poster: string): boolean | string | undefined {   // TS syntax
+// function customCheckVideoFn(src, poster) {                                              // JS syntax
+    if (!src) {
+        return
+    }
+    if (src.indexOf('http') !== 0) {
+        return 'Video src must start width http/https'
+    }
+    return true
+
+    // The following three way, you should choose one:
+    // 1. return true. Means check successful, editor will insert this video
+    // 2. return a string. Means check failed, need to alert some text info
+    // 3. return undefined. Means check failed, no need to alert some text info
+}
+
+function customParseVideoSrc(src: string): string {  // TS syntax
+// function customParseVideoSrc(src) {               // JS syntax
+    // parse video src and return the new src
+    return newSrc
+}
+
+editorConfig.MENU_CONF['insertVideo'] = {
+    onInsertedVideo(videoNode: VideoElement | null) {  // TS syntax
+    // onInsertedVideo(videoNode) {                    // JS syntax
+        if (videoNode == null) return
+
+        const { src } = videoNode
+        console.log('inserted video', src)
+    },
+    checkVideo: customCheckVideoFn, // support `async function`
+    parseVideoSrc: customParseVideoSrc, // support `async function`
+}
+```
+
+## Upload Video
+
+See [demo](https://github.com/wangeditor-next/server).
+
+```ts{2}
+editorConfig.MENU_CONF['uploadVideo'] = {
+    // menu config...
+}
+```
+
+### Server Address
+
+Required.
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+     server: '/api/upload',
+}
+```
+
+If uploaded successfully, the server must return data like this format:
+
+```js
+{
+    "errno": 0, // it's number, not string
+    "data": {
+        "url": "xxx", // video src, required
+        "poster": "xxx.png" // video poster image, optional
+    }
+}
+
+// @wangeditor-next/editor >= 5.1.8 support video poster
+```
+
+If uploaded failed, the server must return data like this format:
+
+```json
+{
+    "errno": 1, // number, not equal 0
+    "message": "your failed message"
+}
+```
+
+:::tip
+If your server's response body is not above format, you can use the following `customInsert`.
+:::
+
+### Basic Config
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    // form-data fieldName ，default 'wangeditor-uploaded-video'
+    fieldName: 'your-custom-name',
+
+    // max size of one file
+    maxFileSize: 5 * 1024 * 1024, // 5M
+
+    // max length of uploaded files
+    maxNumberOfFiles: 3,
+
+    // file types, default `['video/*']`. If unwanted, you can set []
+    allowedFileTypes: ['video/*'],
+
+    // custom upload params, like token
+    meta: {
+        token: 'xxx',
+        otherKey: 'yyy'
+    },
+
+    // Embed meta in url, not in formData. Default is false
+    metaWithUrl: false,
+
+    // custom http headers
+    headers: {
+        Accept: 'text/x-json',
+        otherKey: 'xxx'
+    },
+
+    // send cookie when cross-origin
+    withCredentials: true,
+
+    // timeout, default 30s
+    timeout: 5 * 1000, // 5 秒
+
+    // video do not support base64 format src.
+}
+```
+
+### Callbacks
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    onBeforeUpload(file: File) {   // TS syntax
+    // onBeforeUpload(file) {      // JS syntax
+        // `file` is selected file, format like { key: file }
+        return file
+
+        // You can return:
+        // 1. return the file object or a new file object. Editor will upload it.
+        // 2. return false. Stop upload this file.
+    },
+
+    onProgress(progress: number) {  // TS syntax
+    // onProgress(progress) {       // JS syntax
+        // progress is a number 0-100
+        console.log('progress', progress)
+    },
+
+    // One file upload success
+    onSuccess(file: File, res: any) {  // TS syntax
+    // onSuccess(file, res) {          // JS syntax
+        console.log(`${file.name} uploaded`, res)
+    },
+
+    // One file upload failed
+    onFailed(file: File, res: any) {  // TS syntax
+    // onFailed(file, res) {          // JS syntax
+        console.log(`${file.name} failed`, res)
+    },
+
+    // upload error or timeout
+    onError(file: File, err: any, res: any) {   // TS syntax
+    // onError(file, err, res) {                // JS syntax
+        console.log(`${file.name} error`, err, res)
+    },
+}
+```
+
+### Custom Functions
+
+If you use Type script, you should define a function type first.
+
+```ts
+type InsertFnType = (url: string, poster: string = '') => void
+```
+
+#### Custom Insert
+
+If your server response body is not above format, you can use `customInsert` to insert video.
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    customInsert(res: any, insertFn: InsertFnType) {     // TS syntax
+    // customInsert(res: any, insertFn: InsertFnType) {  // JS syntax
+
+        // `res` is server response
+
+        // Get video's url and poster in res, and insert to editor
+        insertFn(url, poster)
+    },
+}
+```
+
+#### Custom Upload
+
+If you unwanted wangEditor's embedded upload function, you can use `customUpload` to upload videos yourself.
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    async customUpload(file: File, insertFn: InsertFnType) {  // TS syntax
+    // async customUpload(file, insertFn) {                   // JS syntax
+
+        // `file` is your selected file
+
+        // upload videos yourself, and get video's url and poster
+
+        // insert video
+        insertFn(url, poster)
+    }
+}
+```
+
+#### Custom Select Videos
+
+If you unwanted wangEditor's embedded select function, you can use `customBrowseAndUpload` to implement by yourself.
+
+```ts
+editorConfig.MENU_CONF['uploadVideo'] = {
+    customBrowseAndUpload(insertFn: InsertFnType) {   // TS syntax
+    // customBrowseAndUpload(insertFn) {              // JS syntax
+        // 1. select files by yourself
+        // 2. upload files, and get video's url and poster
+        // 3. insert video
+        insertFn(url, poster)
+    }
+}
+```
+
+## table
+
+- `minWidth` table cell min width
+- `tableHeader` table header
+- `tableFullWidth` table width adaptation
+
+```ts
+editorConfig.MENU_CONF['insertTable'] = {
+    minWidth: 60,
+    // Table header
+    tableHeader: {
+        selected: false, // Do not enable the table header by default
+    },
+    // Table width adaptation
+    tableFullWidth: {
+        selected: true, // By default enable form width adaptation
+    },
+}
+```
+
+## Code Highlight
+
+- `codeLangs` configure code language
+- `selected: true` configure code block default language **(optional)**
+
+```ts
+editorConfig.MENU_CONF['codeSelectLang'] = {
+    codeLangs: [
+        { text: 'CSS', value: 'css', selected: true },
+        { text: 'HTML', value: 'html' },
+        { text: 'XML', value: 'xml' },
+        // others...
+    ]
+}
+```
+
+:::tip
+When you want to edit code language, you can only choose language from `editor.getMenuConfig('codeSelectLang').codeLangs`.You can't edit it at will!<br>
+If you want a new language, please commit an issue to us. It needs to change the editor's source code.
+:::
+
+## Others
+
+You can see [General-way](#general-way) to change other menus config.
+
+---
+
+<!-- source: docs/en/guide/API.md -->
+
+## 10. API.md
+
+# Editor API
+
+## Config API
+
+### getConfig
+
+Get all editor's default config.
+
+```ts
+editor.getConfig()
+```
+
+### getMenuConfig
+
+Get one menu default config by key, see [Menu config](./menu-config.md).
+
+```ts
+editor.getMenuConfig(menuKey)
+```
+
+### getAllMenuKeys
+
+Get all editor's embed menus keys.
+
+```ts
+editor.getAllMenuKeys()
+```
+
+### alert
+
+Trigger editor's alert, you can config it by [customAlert](./menu-config.md).
+
+```ts
+editor.alert('错误信息', 'error')
+```
+
+## Content API
+
+### handleTab
+
+Define behavior when tap `tab` key.
+
+```ts
+editor.handleTab = () => editor.insertText('    ')
+```
+
+### getHtml
+
+`editor.getHtml()` return **unformatted** html string.
+
+```html
+<p>head</p><p>hello <strong>word</strong></p>
+```
+
+You can format html by yourself, use [xml-formatter](https://www.npmjs.com/package/xml-formatter).
+
+### getText
+
+Get editor's plain text.
+
+```ts
+const text = editor.getText()
+```
+
+### setHtml
+
+Rewrite editor HTML content.
+
+```ts
+editor.setHtml('<p>hello</p>')
+```
+
+PS: wangEditor can only understand the **HTML format produced by `editor.getHtml()`**, but custom HTML format.
+
+If you want to insert some HTML, use [dangerouslyInsertHtml](#dangerouslyinserthtml) please.
+
+### isEmpty
+
+Determine whether the editor is empty (just has an empty paragraph)
+
+```ts
+editor.isEmpty()
+```
+
+:::tip
+This method can only identify an empty paragraph. If you want more info, use `editor.getText()` or `editor.getHtml()`.
+:::
+
+### getSelectionText
+
+```ts
+editor.getSelectionText()
+```
+
+### getElemsByType
+
+Get all elements in editor by type.
+
+```ts
+editor.getElemsByType('image') // all images
+editor.getElemsByType('link') // all links
+```
+
+### getElemsByTypePrefix
+
+Get all elements in editor by type prefix.
+
+```ts
+editor.getElemsByTypePrefix('header') // all header: header1 header2 header3...
+```
+
+### deleteBackward
+
+```ts
+editor.deleteBackward()
+```
+
+### deleteForward
+
+```ts
+editor.deleteForward()
+```
+
+### deleteFragment
+
+Delete all selected content.
+
+```ts
+editor.deleteFragment()
+```
+
+### getFragment
+
+Get selected content, JSON format.
+
+```ts
+editor.getFragment()
+```
+
+### insertBreak
+
+```ts
+editor.insertBreak()
+```
+
+### insertText
+
+```ts
+editor.insertText('xxx')
+```
+
+### dangerouslyInsertHtml
+
+Insert HTML string, but it's dangerous. There is no guarantee of complete consistency.
+
+```ts
+editor.dangerouslyInsertHtml(`<h1>Header1</h1><p>Hello <b>word</b></p>`)
+```
+
+:::tip
+If you want to **rewrite** editor HTML content, use [setHtml](#sethtml) please.
+:::
+
+### clear
+
+```ts
+editor.clear()
+```
+
+### undo
+
+```ts
+editor.undo()
+```
+
+### redo
+
+```ts
+editor.redo()
+```
+
+### clear history
+
+wangEditor does not currently expose a dedicated API to clear the undo / redo stacks. However, the editor instance is extended by `slate-history`, so you can reset `history` directly.
+
+```ts
+import type { HistoryEditor } from 'slate-history'
+
+const historyEditor = editor as HistoryEditor
+
+historyEditor.history = {
+  undos: [],
+  redos: [],
+}
+```
+
+A common use case is to run this right after `editor.setHtml(...)` or after loading existing content, so users cannot undo back to the previous content.
+
+### history without merging
+
+If you need a programmatic insert to become its own undo step instead of merging into the previous history entry, you can directly use `HistoryEditor.withoutMerging(...)` from `slate-history`.
+
+```ts
+import { HistoryEditor } from 'slate-history'
+
+HistoryEditor.withoutMerging(editor as HistoryEditor, () => {
+  editor.insertText('plain text')
+})
+```
+
+This is useful for flows like “paste HTML first, then let the user keep plain text only”. Since the editor instance is already extended by `slate-history` at runtime, you do not need to wait for a separate wangEditor wrapper API.
+
+## Node API
+
+Please learn the editor [content node structure standard](./node-define.md) first.
+
+### insertNode
+
+Insert a node in selection.
+
+```ts
+const node = { type: 'paragraph', children: [{ text: 'simple text' }] }
+editor.insertNode(node)
+```
+
+### insertNodes
+
+Insert many nodes in selection.
+
+```ts
+import { SlateTransforms } from '@wangeditor-next/editor'
+
+const node1 = { type: 'paragraph', children: [{ text: 'aaa' }] }
+const node2 = { type: 'paragraph', children: [{ text: 'bbb' }] }
+const nodeList = [node1, node2]
+
+SlateTransforms.insertNodes(editor, nodeList)
+```
+
+### removeNodes
+
+Remove all nodes in selection.
+
+```ts
+import { SlateTransforms } from '@wangeditor-next/editor'
+
+SlateTransforms.removeNodes(editor)
+```
+
+### Get selected nodes
+
+Use `SlateEditor.nodes` to get selected nodes, see `Editor.nodes` API in [Slate.js doc](https://docs.slatejs.org/).
+
+```ts
+import { SlateEditor, SlateElement, SlateNode } from '@wangeditor-next/editor'
+
+const nodeEntries = SlateEditor.nodes(editor, {
+    match: (node: SlateNode) => {  // TS syntax
+    // match: (node) => {          // JS syntax
+        if (SlateElement.isElement(node)) {
+            if (node.type === 'paragraph') {
+                return true // match paragraph
+            }
+        }
+        return false
+    },
+    universal: true,
+})
+
+if (nodeEntries == null) {
+    console.log('No selected paragraphs')
+} else {
+    for (let nodeEntry of nodeEntries) {
+        const [node, path] = nodeEntry
+        console.log('selected node', node)
+        console.log('cur path', path)
+    }
+}
+```
+
+### setNodes
+
+Set node props in selection
+
+```ts
+import { SlateTransforms } from '@wangeditor-next/editor'
+
+SlateTransforms.setNodes(editor, {
+  // @ts-ignore
+  textAlign: 'right'
+}, {
+  mode: 'highest'
+})
+```
+
+### getParentNode
+
+```ts
+const parentNode = editor.getParentNode(node) // return a node or null
+```
+
+### toDOMNode
+
+Get DOM node by a slate node.
+
+```ts
+const elem = editor.toDOMNode(node) // return HTMLElement
+```
+
+### isInline
+
+Inline's concept, see [Slate.js doc](https://docs.slatejs.org/concepts/02-nodes).
+
+```ts
+const inline = editor.isInline(node)
+```
+
+### isVoid
+
+Void's concept, See [Slate.js doc](https://docs.slatejs.org/concepts/02-nodes).
+
+```ts
+const void = editor.isVoid(node)
+```
+
+### isText
+
+Text's concept, See [Slate.js doc](https://docs.slatejs.org/concepts/02-nodes).
+
+```ts
+import { SlateText } from '@wangeditor-next/editor'
+
+SlateText.isText(node) // true/false
+```
+
+### isElement
+
+Element's concept, See [Slate.js doc](https://docs.slatejs.org/concepts/02-nodes).
+
+```ts
+import { SlateElement } from '@wangeditor-next/editor'
+
+SlateElement.isElement(node) // true/false
+```
+
+### addMark
+
+Mark is text style, like bold italic...
+
+```ts
+editor.addMark('bold', true)
+editor.addMark('color', '#999')
+```
+
+### removeMark
+
+```ts
+editor.removeMark('bold') // cancel bold
+```
+
+### marks
+
+Get selected text marks.
+
+```ts
+import { SlateEditor } from '@wangeditor-next/editor'
+
+SlateEditor.marks(editor) // like { bold: true, color: "#595959" }
+```
+
+## DOM API
+
+### id prop
+
+Editor id, unique.
+
+```ts
+editor.id // like 'wangEditor-1'
+```
+
+### isFullScreen prop
+
+```ts
+editor.isFullScreen // true/false
+```
+
+### focus
+
+```ts
+editor.focus()
+
+// editor.focus(true) // Select end
+```
+
+### blur
+
+```ts
+editor.blur()
+```
+
+### isFocused
+
+```ts
+editor.isFocused() // true/false
+```
+
+### updateView
+
+Force update view and re-render DOM.
+
+```ts
+editor.updateView()
+```
+
+:::tip
+`updateView` is an inner API, not recommended for users.
+:::
+
+### scrollToElem
+
+Scroll to designated DOM element, like html anchor.<br>
+You can use `toDOMNode` to get DOM element and it's id.
+
+See [catalog demo](https://wangeditor-next.github.io/demo/catalog.html?lang=en).
+
+```ts
+editor.scrollToElem(elemId)
+```
+
+### showProgressBar
+
+```ts
+editor.showProgressBar(progress) // progress is number 0-100
+```
+
+### hidePanelOrModal
+
+Hide current panel dropList or modal.
+
+```ts
+editor.hidePanelOrModal()
+```
+
+### fullScreen
+
+```ts
+editor.fullScreen()
+```
+
+:::tip
+Need to standard your html structure, see [Getting started](./getting-started.md).
+:::
+
+### unFullScreen
+
+```ts
+editor.unFullScreen()
+```
+
+### disable
+
+```ts
+editor.disable()
+```
+
+### isDisabled
+
+```ts
+editor.isDisabled() // true/false
+```
+
+### enable
+
+```ts
+editor.enable()
+```
+
+### destroy
+
+Destroy the editor and it's toolbar.
+
+```ts
+editor.destroy()
+```
+
+:::tip
+`destroy` can only remove the DOM element, remove global event binding.
+:::
+
+### Get Editable Container
+
+Get editable container DOM element.
+
+```ts
+editor.getEditableContainer()
+```
+
+## selection API
+
+You may see [Slate Location doc](https://docs.slatejs.org/concepts/03-locations) API first.
+
+### selection prop
+
+```ts
+editor.selection // selection or null
+```
+
+selection's format like:
+
+```json
+{
+  "anchor": { "path": [1,0], "offset":8 },
+  "focus": { "path": [1,0], "offset":10 }
+}
+```
+
+### select
+
+Select a designated location.
+
+```ts
+const newSelection = {
+  anchor: { path: [1,0], offset:8 },
+  focus: { path: [1,0], offset:10 }
+}
+editor.select(newSelection)
+```
+
+### selectAll
+
+Select all content.
+
+```ts
+editor.selectAll()
+```
+
+### deselect
+
+Cancel select.
+
+```ts
+editor.deselect()
+```
+
+### move
+
+Move cursor.
+
+```ts
+editor.move(3) // Move cursor 3 characters
+```
+
+### moveReverse
+
+Reverse move cursor.
+
+```ts
+editor.moveReverse(2) // Reverse move cursor 2 characters
+```
+
+### restoreSelection
+
+Restore prev selection which is not null.
+
+```ts
+editor.restoreSelection()
+```
+
+### isSelectedAll
+
+```ts
+editor.isSelectedAll() // true/false
+```
+
+### getSelectionPosition
+
+Get text selection position data (like `top` `left` `right` `bottom`).
+
+```ts
+editor.getSelectionPosition() // eg. { left: "80.15px", top: "116px" }
+```
+
+PS: This position is **relative to editor DOM node**, not `<body>`.<br>
+You can get editor DOM node's position by `editor.getEditableContainer().getBoundingClientRect()`, then compute position which is relative to `<body>`.
+
+### getNodePosition
+
+Get selected node position data (like `top` `left` `right` `bottom`).
+
+```ts
+editor.getNodePosition(node) // eg. { left: "80.15px", top: "116px" }
+```
+
+PS: This position is **relative to editor DOM node**, not `<body>`.<br>
+You can get editor DOM node's position by `editor.getEditableContainer().getBoundingClientRect()`, then compute position which is relative to `<body>`.
+
+## Custom event
+
+wangEditor use [event-emitter](https://www.npmjs.com/package/event-emitter) to extend custom events.
+
+### on
+
+```ts
+editor.on('event-key', fn)
+```
+
+### off
+
+```ts
+editor.off('event-key', fn)
+```
+
+### once
+
+```ts
+editor.once('event-key', fn)
+```
+
+### emit
+
+```ts
+editor.emit('event-key')
+```
+
+### Embedded events
+
+```ts
+editor.on('fullScreen', () => { console.log('fullScreen') })
+editor.on('unFullScreen', () => { console.log('unFullScreen') })
+editor.on('scroll', () => { console.log('scroll') })
+editor.on('modalOrPanelShow', modalOrPanel => { console.log(modalOrPanel) })
+editor.on('modalOrPanelHide', () => { console.log('modalOrPanelHide') })
+```
+
+## Use Slate.js API
+
+wangEditor is based on [slate.js](https://docs.slatejs.org/) but React. You may use Slate.js API to operate the editor.
+
+### Transforms API
+
+See [slate Transforms API](https://docs.slatejs.org/api/transforms) first.
+
+You could get slate `Transforms` object from `@wangeditor-next/editor`, no need to install `slate`.
+
+```ts
+import { SlateTransforms } from '@wangeditor-next/editor'
+```
+
+### Node Editor API
+
+See [slate Node API](https://docs.slatejs.org/api/nodes) first.
+
+You could get slate Node objects from `@wangeditor-next/editor`, no need to install `slate`.
+
+```ts
+import { SlateEditor, SlateNode, SlateElement, SlateText } from '@wangeditor-next/editor'
+```
+
+### Location API
+
+See [slate Location API](https://docs.slatejs.org/api/locations) first.
+
+You could get slate Location objects from `@wangeditor-next/editor`, no need to install `slate`.
+
+```ts
+import { SlateLocation, SlatePath, SlatePoint, SlateRange } from '@wangeditor-next/editor'
+```
+
+---
+
+<!-- source: docs/en/guide/node-define.md -->
+
+## 11. node-define.md
+
+# Date Structure
+
+wangEditor is based on Slate.js, so you may learn [Slate node design](https://docs.slatejs.org/concepts/02-nodes) first.
+
+## What
+
+You maybe have learned [editor API](./API.md), let me ask you some questions.
+
+- `editor.addMark(key, value)` can set tet style, but how can I set through-line, Which `key` and `value`?
+- `editor.insertNode(node)` can insert a node, but how can I insert a link node, how to define the `node`?
+- `SlateTransforms.setNodes(editor, {...})` can set node props, but how can I set line-height, how to define `{...}`?
+
+This article will tell you all of the node types and props, so you can do everything by the editor API.
+
+## Getting Started
+
+If you want to know a node structure quickly, it's very simply.
+- Create an editor and run in browser, or use [demo](https://wangeditor-next.github.io/demo/index.html?lang=en)
+- Do something, like: bold, set color, set header ...
+- Run `editor.children` in browser's console
+
+For example, you type some text, set a header or list, run `editor.children` then you can see it's structure
+
+![](/image/数据结构-1-en.png)
+
+Set line height and text style, run `editor.children` then you can see it's structure
+
+![](/image/数据结构-2-en.png)
+
+## Text Node
+
+A text node **must have a `text` prop**, like `{ text: 'hello' }` . You can extend custom props, for instance bold text can be `{ text: 'hello', bold: true }` .
+
+Text node is leaf node, it **can not have `children` prop**.
+
+## Element Node
+
+An element node **must have two props `type` and `children`** , like `{ type: 'header1', children: [ { text: 'hello' } ] }` . You can extend custom props, for instance `{ type: 'header1', textAlign: 'center', children: [ { text: 'hello' } ] }` .
+
+## Inline Element
+
+By default, an element node is **block** style, like `<div>` in HTML. But we want some elements are **inline** style, like `<img>` `<a>` .
+
+We can define an element node as `inline` by **rewrite editor `isInline` API**, see link element [plugin source code](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/link/plugin.ts).
+
+## Void Element
+
+By default, an element node is not void node, it can have children. But we want some elements ar `void` node, like `<img>` `<video>` .
+
+We can define an element node as `void` by **rewrite editor `isVoid` API**, see image element [plugin source code](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/image/plugin.ts).
+
+Void element must have a `children` prop, which involve an empty text node. A image element is like:
+
+```js
+{
+    type: 'image',
+    // other props ...
+    children: [{ text: '' }] // A void element must have a children props, which involve an empty text node.
+}
+```
+
+## All Nodes Structure
+
+See `type` in every source code.
+
+- [Text style](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/text-style/custom-types.ts) - Extend text node props
+- [Font color and background color](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/color/custom-types.ts) - Extend text node props
+- [Paragraph](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/paragraph/custom-types.ts) - Define element node
+- [Line height](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/line-height/custom-types.ts) - Extend element node props
+- [Font size and family](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/font-size-family/custom-types.ts) - Extend text node props
+- [Justify](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/justify/custom-types.ts) - Extend element node props
+- [indent](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/indent/custom-types.ts) - Extend element node props
+- [Link](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/link/custom-types.ts) - Define **inline** element
+- [Header](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/header/custom-types.ts) - Define element node
+- [Blockquote](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/blockquote/custom-types.ts) - Define element node
+- [Image](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/image/custom-types.ts) - Define **inline and void** element
+- [Split line](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/divider/custom-types.ts) - Define **void** element
+- [Code block](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/basic-modules/src/modules/code-block/custom-types.ts) - Define element node
+- [List](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/list-module/src/module/custom-types.ts) - Define element node
+- [Table](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/table-module/src/module/custom-types.ts) - Define element node
+- [Video](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/video-module/src/module/custom-types.ts) - Define **void** element
+
+---
+
+<!-- source: docs/en/guide/development.md -->
+
+## 12. development.md
+
+# Extend
+
+WIP...
+
+See [Chinese version](../../zh/guide/development.md).
+
+---
+
+<!-- source: docs/en/guide/i18n.md -->
+
+## 13. i18n.md
+
+# I18n
+
+## Switch Language
+
+We provide Chinese and English by default. The default is Chinese.
+
+```js
+import { i18nChangeLanguage } from '@wangeditor-next/editor'
+
+// Switch language - 'en' or 'zh-CN'
+i18nChangeLanguage('en')
+
+// Then create editor
+```
+
+## Get Language
+
+Get all language resources.
+
+```js
+import { i18nGetResources } from '@wangeditor-next/editor'
+
+const resources = i18nGetResources('en') // 'en' or 'zh-CN'
+```
+
+Get one word.
+
+```js
+import { t } from '@wangeditor-next/editor'
+
+console.log( t('header.title') )
+```
+
+## Extend Other Language
+
+You should add language words config first, then switch.
+
+```js
+import { i18nAddResources, i18nChangeLanguage, t } from '@wangeditor-next/editor'
+
+// Extend other language, like Japanese
+i18nAddResources('ja', {
+    // header
+    header: {
+        title: 'ヘッダー',
+        text: 'テキスト',
+    },
+    // ... other words config ...
+})
+
+// Switch language
+i18nChangeLanguage('ja')
+
+// Get one word
+console.log( t('header.title') )
+
+// create editor...
+```
+
+---
+
+<!-- source: docs/en/guide/theme.md -->
+
+## 14. theme.md
+
+# Theme
+
+You can custom your theme by CSS vars , you can checkout all styles in the [source code](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/editor/src/assets/index.less).
+
+```css
+/* Dark theme */
+html.dark {
+    --w-e-textarea-bg-color: #333;
+    --w-e-textarea-color: #fff;
+    /* ...others... */
+}
+```
+
+---
+
+<!-- source: docs/en/guide/for-ts.md -->
+
+## 15. for-ts.md
+
+# For Typescript
+
+## Extend Type
+
+Create a `custom-types.d.ts` file, ensure it will be included in `tsconfig.json`.
+
+```ts
+// custom-types.d.ts
+
+import { SlateDescendant, SlateElement, SlateText } from '@wangeditor-next/editor'
+
+declare module '@wangeditor-next/editor' {
+    // Extend Text
+    interface SlateText {
+        text: string
+    }
+
+    // Extend Element
+    interface SlateElement {
+        type: string
+        children: SlateDescendant[]
+    }
+}
+```
+
+---
+
+<!-- source: docs/en/guide/plugins.md -->
+
+## 16. plugins.md
+
+# Plugins
+
+<!-- - [`ctrl+enter` insertBeak](https://github.com/wangeditor-next/wangEditor-plugin-ctrl-enter/blob/main/README-en.md) -->
+- [Mention `@`](https://github.com/wangeditor-next/wangEditor-next/tree/master/packages/plugin-mention/README-en.md)
+- [Formula](https://github.com/wangeditor-next/wangEditor-next/blob/master/packages/plugin-formula/README-en.md)
+- [Markdown](https://github.com/wangeditor-next/wangEditor-next/tree/master/packages/plugin-markdown/README-en.md)
+<!-- - [Upload attachment](https://github.com/wangeditor-next/wangEditor-plugin-upload-attachment/blob/main/README-en.md) -->
+- [Link card](https://github.com/wangeditor-next/wangEditor-next/tree/master/packages/plugin-link-card/README-en.md)
+- [Float image](https://github.com/wangeditor-next/wangEditor-next/tree/master/packages/plugin-float-image/README-en.md)
+
+---
+
+<!-- source: docs/en/guide/video-course.md -->
+
+## 17. video-course.md
+
+# Video Tutorials
+
+## Video Tutorials
+
+Follow wangEditor on [Bilibili](https://space.bilibili.com/697803545)
+
+- [How to Choose a Rich Text Editor](https://www.bilibili.com/video/BV1XB4y1C7EP)
+- [wangEditor5 Tutorial 01 - Getting Started](https://www.bilibili.com/video/BV1GU4y1q7ob)
+- [wangEditor5 Tutorial 02 - For Vue2](https://www.bilibili.com/video/BV1b34y1h7oj)
+- [wangEditor5 Tutorial 03 - For Vue3](https://www.bilibili.com/video/BV1xR4y1A7yJ)
+- [wangEditor5 Tutorial 04 - For React](https://www.bilibili.com/video/BV1E3411N7XB)
+- [wangEditor5 Tutorial 05 - Setting and Getting Content](https://www.bilibili.com/video/BV1vG4y1i7pH)
+- [wangEditor5 Tutorial 06 - What to Do When HTML Displays Without Style](https://www.bilibili.com/video/BV15a411J7UC)
+- [wangEditor5 Tutorial 07 - Uploading Images](https://www.bilibili.com/video/BV1GU4y1S7RQ)
+- [wangEditor5 Tutorial 08 - Toolbar Configuration](https://www.bilibili.com/video/BV18L4y1F7qA/)
+- [wangEditor5 Tutorial 09 - Menu Configuration](https://www.bilibili.com/video/BV1LS4y187eC/)
+- [wangEditor5 Tutorial 10 - Editor Configuration](https://www.bilibili.com/video/BV1jF41177GD/)
+- [wangEditor5 Tutorial 11 - API (Long Video, Please Watch Patiently)](https://www.bilibili.com/video/BV1fu411z75r/)
+- [wangEditor5 Tutorial 12 - Custom Extensions Part 1 (Long Video, Please Watch Patiently)](https://www.bilibili.com/video/BV17t4y1L71C)
+- [wangEditor5 Tutorial 13 - Custom Extensions Part 2 (Long Video, Please Watch Patiently)](https://www.bilibili.com/video/BV16Y4y1A7iM/)
+
+If you need additional video tutorials, please submit feedback via [issue](https://github.com/wangeditor-next/wangEditor-next/issues).

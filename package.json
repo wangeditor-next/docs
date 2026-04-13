@@ -11,9 +11,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:gen-full": "node scripts/generate-full-docs.mjs",
+    "docs:dev": "pnpm docs:gen-full && vitepress dev docs",
+    "docs:build": "pnpm docs:gen-full && vitepress build docs",
+    "docs:preview": "pnpm docs:gen-full && vitepress preview docs"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.21.2",

@@ -21,10 +21,3 @@
 
 如需要其他视频教程，可去提交 [issue](https://github.com/wangeditor-next/wangEditor-next/issues) 反馈。
 
-## 作者抖音
-
-关注作者抖音，学习编程小技巧~
-
-![](/image/sponsor/douyin.jpeg)
-
-
