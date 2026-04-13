@@ -126,7 +126,11 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
         {
             text: '资源',
             collapsed: false,
-            items: [{ text: '视频教程', link: '/video-course' }],
+            items: [
+                { text: 'AI 全量 Markdown（中文）', link: '/ai/zh-guide-full.txt' },
+                { text: 'AI 全量 Markdown（English）', link: '/ai/en-guide-full.txt' },
+                { text: '视频教程', link: '/video-course' },
+            ],
         },
     ];
 }
