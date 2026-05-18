@@ -10,6 +10,19 @@ on:
 
   # 允许你从 Actions 选项卡手动运行此工作流程
   workflow_dispatch:
+    inputs:
+      editor_version:
+        description: 'Optional editor version to render in navbar (e.g. 5.7.1)'
+        required: false
+        type: string
+
+  # 由主仓库 release workflow 触发，携带已发布版本号
+  repository_dispatch:
+    types: [editor-release-published]
+
+  # 兜底定时刷新，避免错过外部触发
+  schedule:
+    - cron: '25 2 * * *'
 
 # 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages
 permissions:
@@ -45,8 +58,39 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Install dependencies
         run: pnpm install # 或 pnpm install / yarn install / bun install
+      - name: Resolve editor version
+        id: editor_version
+        env:
+          INPUT_EDITOR_VERSION: ${{ inputs.editor_version }}
+          DISPATCH_EDITOR_VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          set -euo pipefail
+
+          version="${INPUT_EDITOR_VERSION:-}"
+          if [ -z "$version" ]; then
+            version="${DISPATCH_EDITOR_VERSION:-}"
+          fi
+          if [ -z "$version" ]; then
+            if version="$(pnpm view @wangeditor-next/editor version 2>/dev/null)"; then
+              echo "Resolved from npm: $version"
+            else
+              version="$(node -p "require('@wangeditor-next/editor/package.json').version")"
+              echo "::warning::Failed to fetch npm latest. Fallback to local installed version: $version"
+            fi
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Using editor version: $version"
       - name: Build with VitePress
+        env:
+          DOCS_EDITOR_VERSION: ${{ steps.editor_version.outputs.version }}
         run: pnpm docs:build # 或 pnpm docs:build / yarn docs:build / bun run docs:build
+      - name: Verify navbar version in build output
+        run: |
+          set -euo pipefail
+          version='${{ steps.editor_version.outputs.version }}'
+          grep -q "$version" docs/.vitepress/dist/index.html
+          grep -q "$version" docs/.vitepress/dist/en/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

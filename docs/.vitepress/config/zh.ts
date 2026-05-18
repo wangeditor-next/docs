@@ -3,6 +3,7 @@ import { defineConfig, type DefaultTheme } from 'vitepress';
 
 const require = createRequire(import.meta.url);
 const pkg = require('@wangeditor-next/editor/package.json');
+const editorVersion = process.env.DOCS_EDITOR_VERSION || pkg.version;
 
 export const zh = defineConfig({
     lang: 'zh-Hans',
@@ -64,7 +65,7 @@ function nav(): DefaultTheme.NavItem[] {
             link: 'https://wangeditor-next.github.io/demo/',
         },
         {
-            text: pkg.version,
+            text: editorVersion,
             items: [
                 {
                     text: '更新日志',
