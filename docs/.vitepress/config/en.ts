@@ -127,8 +127,8 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
             text: 'Resources',
             collapsed: false,
             items: [
-                { text: 'AI Full Markdown (English)', link: '/ai/en-guide-full.txt' },
-                { text: 'AI Full Markdown (中文)', link: '/ai/zh-guide-full.txt' },
+                { text: 'AI Full Markdown (English)', link: 'ai/en-guide-full.txt', base: '/docs/' },
+                { text: 'AI Full Markdown (中文)', link: 'ai/zh-guide-full.txt', base: '/docs/' },
                 { text: 'Video Tutorials', link: '/video-course' },
             ],
         },
